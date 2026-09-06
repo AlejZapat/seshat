@@ -1,0 +1,266 @@
+<div data-crud data-table="projects" data-show="code,name,typeId,progress,statusId" class="min-w-full bg-card border border-border rounded-xl">
+
+    <div class="flex flex-col gap-2 border-b border-border p-4">
+        <div class="flex flex-wrap items-center justify-between">
+            <h1 class="text-lg font-semibold">Proyectos</h1>
+            <button type="button" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-hover disabled:opacity-50 disabled:pointer-events-none" aria-label="new" aria-haspopup="dialog" aria-expanded="false" aria-controls="new-project" data-hs-overlay="#new-project">
+                Agregar
+            </button>
+        </div>
+        <div class="flex flex-wrap items-center justify-between">
+
+            <div class="relative">
+                <input type="search" aria-label="search" class="peer py-2 px-4 ps-11 block w-full bg-surface border-transparent text-sm rounded-lg sm:text-foreground placeholder:text-muted-foreground-1 focus:bg-layer focus:border-primary-focus focus:ring-primary-focus disabled:opacity-50 disabled:pointer-events-none" placeholder="Buscar">
+                <div class="absolute inset-y-0 inset-s-0 flex items-center pointer-events-none ps-3.5 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                    <span class="material-symbols-outlined text-muted-foreground text-sm">search</span>
+                </div>
+            </div>
+            <span aria-label="results" class="text-sm text-muted-foreground"></span>
+
+        </div>
+    </div>
+
+    <div class="overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-track]:bg-scrollbar-track [&::-webkit-scrollbar-thumb]:bg-scrollbar-thumb">
+        <table class="min-w-full divide-y divide-table-line text-sm">
+            <thead class="text-xs font-medium text-muted-foreground-1 uppercase">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-start w-32">Código</th>
+                    <th scope="col" class="px-6 py-3 text-start">Nombre</th>
+                    <th scope="col" class="px-6 py-3 text-start w-32">Tipo</th>
+                    <th scope="col" class="px-6 py-3 text-start w-32">Avance</th>
+                    <th scope="col" class="px-6 py-3 text-start w-32">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-start w-32">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-table-line font-medium text-foreground"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Preline — Crear proyecto -->
+<div id="new-project" class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="new-project-label">
+    <div class="sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-overlay border border-overlay-line shadow-2xs rounded-xl pointer-events-auto">
+            <form method="post" autocomplete="off" role="form" enctype="multipart/form-data" data-refresh="false">
+                <div class="flex justify-between items-center py-3 px-4 border-b border-overlay-header">
+                    <h3 id="new-project-label" class="font-semibold">Nuevo Proyecto</h3>
+                    <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full bg-surface border border-surface-line text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus disabled:opacity-50 disabled:pointer-events-none" aria-label="Close" data-hs-overlay="#new-project">
+                        <span class="sr-only">Close</span>
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+                <div class="p-4 overflow-y-auto" data-form-body></div>
+                <div class="flex justify-end items-center gap-x-3 py-3 px-4 border-t border-overlay-footer">
+                    <button type="button" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none" data-hs-overlay="#new-project">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-focus disabled:opacity-50 disabled:pointer-events-none">
+                        Crear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Drawer Preline (off-canvas) — Editar proyecto -->
+<div id="edit-project" class="hs-overlay hidden hs-overlay-open:translate-x-0 translate-x-full fixed top-0 end-0 transition-all duration-300 transform h-full max-w-md w-full z-80 bg-overlay border-s border-overlay-line flex flex-col" role="dialog" tabindex="-1" aria-labelledby="edit-project-label">
+    <form method="post" autocomplete="off" role="form" enctype="multipart/form-data" data-auth="1" class="flex flex-col h-full">
+        <div class="shrink-0 flex justify-between items-center py-3 px-4 border-b border-overlay-header">
+            <h3 id="edit-project-label" class="font-semibold">Editar Proyecto</h3>
+            <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full bg-surface border border-surface-line text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus disabled:opacity-50 disabled:pointer-events-none" aria-label="Close" data-hs-overlay="#edit-project">
+                <span class="sr-only">Close</span>
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4" data-form-body></div>
+        <div class="shrink-0 flex justify-end items-center gap-x-3 py-3 px-4 border-t border-overlay-footer">
+            <button type="submit" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-focus disabled:opacity-50 disabled:pointer-events-none">
+                Actualizar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    (async function() {
+        // Obtener contenedor principal
+        const zContainer = document.querySelector('[data-crud]');
+        const modalBody = document.querySelector('#new-project [data-form-body]');
+        const drawerBody = document.querySelector('#edit-project [data-form-body]');
+
+        try {
+            // Obtener el servicio de IndexedDB (expuesto por main.js)
+            const db = window.app?.db;
+
+            // Obtener catálogos
+            const types = await db.getAll('sys_project_types');
+            const trackingBasis = await db.getAll('sys_project_tracking_basis');
+            const currencies = await db.getAll('sys_currencies');
+            const status = await db.getAll('sys_project_status');
+
+            // Mapas id->texto para la tabla (Read)
+            const typesMap = Object.fromEntries(types.map(r => [r.id, r.name]));
+            const statusMap = Object.fromEntries(
+                status.map(r => [r.id, `<span class="badge" data-type="${r.token}">${r.name}</span>`])
+            );
+
+            /**
+             * Genera el HTML de las <option> de un <select> a partir de un
+             * catálogo [{id, name}], marcando la opción por defecto si se indica.
+             * @param {Array<{id:number, name:string}>} items - Catálogo
+             * @param {number} [defaultValue] - Valor preseleccionado
+             * @returns {string}
+             */
+            const buildOptions = (items, defaultValue) =>
+                items.map(item =>
+                    `<option value="${item.id}" ${item.id === defaultValue ? 'selected' : ''}>${item.name}</option>`
+                ).join('');
+
+            /**
+             * Definición única de campos del formulario de proyecto.
+             * showIn controla en qué formulario aparece cada campo:
+             * 'create' → solo modal | 'update' → solo drawer | ambos → los dos.
+             * Es la fuente de verdad compartida entre Create y Update (estrategia B).
+             * @type {Array<Object>}
+             */
+            const FIELDS = [
+                {
+                    showIn: ['create', 'update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Tipo</label>
+                        <select name="typeId" required class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                            ${buildOptions(types, 1)}
+                        </select>
+                    </div>`
+                },
+                {
+                    showIn: ['create', 'update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Código</label>
+                        <input name="code" type="text" maxlength="8" style="width: 8rem;" onchange="this.value=this.value.toUpperCase();"
+                            class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    </div>`
+                },
+                {
+                    showIn: ['create', 'update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Nombre</label>
+                        <input name="name" type="text" maxlength="64" required
+                            class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    </div>`
+                },
+                {
+                    showIn: ['create', 'update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Descripción</label>
+                        <textarea name="description" rows="4"
+                            class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></textarea>
+                    </div>`
+                },
+                {
+                    showIn: ['create', 'update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Moneda</label>
+                        <select name="currencyId" required class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                            ${buildOptions(currencies, 149)}
+                        </select>
+                    </div>`
+                },
+                {
+                    // Solo edición — no existe al crear (arranca en false vía onCreate)
+                    showIn: ['update'],
+                    html: `<div class="mb-4 flex items-center justify-between">
+                        <label class="text-sm font-medium">Probabilidad discreta</label>
+                        <label class="relative inline-block w-11 h-6 cursor-pointer">
+                            <input name="isDiscrete" type="checkbox" class="peer sr-only">
+                            <span class="absolute inset-0 bg-surface-1 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-primary-checked"></span>
+                            <span class="absolute top-1/2 inset-s-0.5 -translate-y-1/2 size-5 bg-switch rounded-full shadow-sm transition-transform! duration-200 ease-in-out peer-checked:translate-x-full"></span>
+                        </label>
+                    </div>`
+                },
+                {
+                    // Solo edición — no tiene sentido antes de que el proyecto tenga avance
+                    showIn: ['update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Base de avance</label>
+                        <select name="trackingBasisId" class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                            ${buildOptions(trackingBasis)}
+                        </select>
+                    </div>`
+                },
+                {
+                    // Solo edición — el estado inicial (1: No Iniciado) lo fija onCreate
+                    showIn: ['update'],
+                    html: `<div class="mb-4">
+                        <label class="block text-sm font-medium mb-2">Estado</label>
+                        <select name="statusId" disabled class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm opacity-50">
+                            ${buildOptions(status)}
+                        </select>
+                    </div>`
+                }
+            ];
+
+            /**
+             * Renderiza en `target` los campos de FIELDS cuyo showIn incluya `mode`.
+             * @param {HTMLElement} target - Contenedor donde inyectar el HTML
+             * @param {'create'|'update'} mode - Modo de formulario
+             * @returns {void}
+             */
+            const renderFields = (target, mode) => {
+                target.innerHTML = FIELDS
+                    .filter(field => field.showIn.includes(mode))
+                    .map(field => field.html)
+                    .join('');
+            };
+
+            renderFields(modalBody, 'create');
+            renderFields(drawerBody, 'update');
+
+            // Definir variables principales
+            const tableName = 'projects';
+            const fields = ['code', 'name', 'typeId', 'progress', 'statusId'];
+            const detailUrl = `${window.location.search}&pid`;
+
+            // Obtener todos los proyectos
+            const projects = await db.getAll(tableName);
+
+            // Leer y Mostrar la tabla
+            await window.app.CRUD.read(zContainer, {
+                dataset: {
+                    table: tableName,
+                    show: fields.join(','),
+                    uri: detailUrl
+                },
+                fields: fields,
+                data: projects,
+                mappers: {
+                    typeId: typesMap,
+                    statusId: statusMap
+                },
+                actions: {
+                    create: { auth: 1 },
+                    read: { auth: 1, url: detailUrl, suffix: '&view=integration' },
+                    edit: { auth: 1, target: 'edit-project' },
+                    delete: { auth: 1 }
+                },
+                onCreate: async (form, recordData) => {
+                    recordData.level = 0;
+                    recordData.trackingBasisId = 1;
+                    recordData.isDiscrete = false;
+                    recordData.statusId = 1;
+                    recordData.progress = 0;
+                },
+                onUpdate: (form, fullRecord, changedFields) => {
+                    const states = JSON.parse(sessionStorage.getItem('updateStates') || '{}');
+                    if (!states.project) states.project = {};
+                    states.project.needsUpdate = true;
+                    sessionStorage.setItem('updateStates', JSON.stringify(states));
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+        }
+    })();
+</script>
