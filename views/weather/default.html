@@ -1,0 +1,288 @@
+<!--
+    @file views/weather/default.html
+    @description Vista Weather — Análisis meteorológico.
+    Migrado desde el tab "Herramienta" (#tab-tool) de la app standalone
+    (index.html). Panel de selección (método, fecha/período, barrido de
+    línea, línea, estructura) + mapa Leaflet + reporte individual.
+    El script de inicialización vive en views-init/weather/default.js.
+-->
+
+<!-- Estilos locales: markers Leaflet + aislamiento de impresión de #report -->
+<style>
+    /* Marker normal: muestra el ID de la estructura como etiqueta tipo pill */
+    .lm-marker {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 0.5rem;
+        background-color: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,.25);
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: background-color .15s ease, transform .15s ease;
+        cursor: pointer;
+    }
+
+    /* Marker activo: resaltado con color primario */
+    .lm-marker--active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,.35);
+    }
+
+    /* Marker coloreado por alerta (barrido de línea) — la variable
+       --marker-alert-color se pone inline por marker (LeafletMap.js),
+       así que esta regla gana siempre sin depender del orden de
+       compilación del bundle. Se aplica DESPUÉS de .lm-marker--active
+       en el HTML (ambas clases conviven) para que el color de alerta
+       se conserve incluso en estado activo — pero acá abajo en el CSS
+       para que su especificidad (misma, por orden de aparición) gane
+       sobre .lm-marker--active cuando ambas están presentes. */
+    .lm-marker--alert {
+        background-color: var(--marker-alert-color);
+        border-color: var(--marker-alert-color);
+        color: white;
+    }
+
+    /* Selección sobre un marker coloreado (barrido): un anillo oscuro
+       fijo, independiente del color de fondo — el escalado/sombra de
+       .lm-marker--active por sí solo no alcanzaba a distinguirse entre
+       muchos markers coloreados juntos (reportado en uso real). */
+    .lm-marker--active.lm-marker--alert {
+        outline: 3px solid #111827;
+        outline-offset: 2px;
+    }
+
+    .leaflet-container:focus { outline: none; }
+
+    /* Tooltip del timeline — visible al hover */
+    .day-bar-wrap:hover .day-tooltip {
+        display: block;
+    }
+
+    /* ── Impresión / "Descargar PDF" ──
+       Aísla #report: todo lo demás de la página (header de la vista, panel
+       de selección, mapa, estados de carga/error) queda oculto. Se usa
+       visibility en vez de display para no alterar el layout/reflow del
+       contenido que sí se imprime. El botón mismo y los íconos de
+       expandir/colapsar no tienen sentido en un PDF estático, así que se
+       ocultan aparte. Las secciones colapsables (swimlane, variables) se
+       fuerzan visibles por JS antes de imprimir (ver Dashboard.js) — acá
+       solo se asegura que, si por algún motivo siguen con la clase
+       `hidden`, igual no aparezcan en blanco. */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #report, #report * {
+            visibility: visible;
+        }
+        #report {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            margin: 0;
+            border: none;
+            box-shadow: none;
+        }
+        #btn-print-report,
+        [data-toggle-icon],
+        #report [data-toggle="variables"],
+        #report [data-toggle-content="variables"] {
+            display: none !important;
+        }
+        #report .rounded-2xl {
+            break-inside: avoid;
+        }
+    }
+</style>
+
+<!-- ── Panel de selección ── -->
+<section id="selection-panel" class="mb-6 p-5 rounded-xl bg-stone-100 dark:bg-stone-800 border border-border">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+        <div class="border border-border rounded-xl p-4">
+
+            <!-- Modo histórico / pronóstico -->
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-medium">Método</label>
+                <div class="flex gap-x-6">
+                    <div class="flex items-center">
+                        <input id="select-method-1" type="radio" name="select-method"
+                                class="shrink-0 size-4 bg-transparent border-line-3 rounded-full shadow-2xs
+                                        text-primary focus:ring-0 focus:ring-offset-0
+                                        checked:bg-primary-checked checked:border-primary-checked
+                                        disabled:opacity-50 disabled:pointer-events-none">
+                        <label for="select-method-1" class="ms-3 text-sm text-muted-foreground-2">Histórico</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="select-method-2" type="radio" name="select-method"
+                                class="shrink-0 size-4 bg-transparent border-line-3 rounded-full shadow-2xs
+                                        text-primary focus:ring-0 focus:ring-offset-0
+                                        checked:bg-primary-checked checked:border-primary-checked
+                                        disabled:opacity-50 disabled:pointer-events-none"
+                                checked>
+                        <label for="select-method-2" class="ms-3 text-sm text-muted-foreground-2">Pronóstico</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fecha y Período — antes de Línea: el barrido de línea
+                    necesita saber qué ventana consultar antes de correr. -->
+            <div class="mb-4">
+                <label for="input-date" class="block mb-2 text-sm font-medium">
+                    Fecha de referencia
+                </label>
+                <input type="date"
+                        id="input-date"
+                        class="py-2.5 px-4 block max-w-full border border-input rounded-lg
+                                text-sm bg-background
+                                focus:outline-none focus:ring-2 focus:ring-ring"/>
+            </div>
+
+            <div class="mb-4">
+                <label for="select-period" class="block mb-2 text-sm font-medium">Período</label>
+                <select id="select-period"
+                        class="py-2.5 px-4 pe-9 block max-w-full border border-input rounded-lg
+                                text-sm bg-background
+                                focus:outline-none focus:ring-2 focus:ring-ring
+                                disabled:opacity-50 disabled:cursor-not-allowed">
+                    <!-- Opciones generadas dinámicamente desde DATE_CONFIG.PERIOD_OPTIONS
+                            (src/modules/weather/constants.js) — ver views-init/weather/default.js -->
+                </select>
+            </div>
+
+            <!-- Escanear línea (barrido) — apagado por defecto.
+                    Marcado oficial de Preline UI 4.2.0 (componente Switch,
+                    variante "with description"), verificado contra
+                    preline.co/docs/components/switch.html -->
+            <div class="mb-4">
+                <div class="flex items-center gap-x-3">
+                    <label for="switch-scan-line" class="relative inline-block w-11 h-6 cursor-pointer">
+                        <input type="checkbox" id="switch-scan-line" class="peer sr-only">
+                        <span class="absolute inset-0 bg-surface-1 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-primary-checked peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+                        <span class="absolute top-1/2 inset-s-0.5 -translate-y-1/2 size-5 bg-switch rounded-full shadow-sm transition-transform duration-200 ease-in-out peer-checked:translate-x-full"></span>
+                    </label>
+                    <label for="switch-scan-line" class="text-sm font-medium cursor-pointer">Escanear línea</label>
+                </div>
+                <p class="mt-1.5 text-xs text-muted-foreground">
+                    Analiza todas las estructuras de la línea al elegirla, coloreando el mapa según el semáforo. Consume cupo de consultas — actívalo solo cuando lo necesites.
+                </p>
+            </div>
+
+            <!-- Línea -->
+            <div class="mb-4">
+                <label for="select-line" class="block mb-2 text-sm font-medium">Línea</label>
+                <select id="select-line"
+                        class="py-2.5 px-4 pe-9 block max-w-full border border-input rounded-lg
+                                text-sm bg-background
+                                focus:outline-none focus:ring-2 focus:ring-ring
+                                disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="">Selecciona una línea…</option>
+                </select>
+                <!-- Barrido en curso — visible mientras runBulkScan() está corriendo -->
+                <div id="scan-status" class="hidden mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                    <div class="size-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin shrink-0"></div>
+                    <span>Analizando estructuras de la línea…</span>
+                </div>
+                <p id="scan-error" class="hidden mt-2 text-xs text-red-700 dark:text-red-400"></p>
+            </div>
+
+            <!-- Estructura -->
+            <div class="mb-4">
+                <label for="select-site" class="block mb-2 text-sm font-medium">Estructura</label>
+                <select id="select-site"
+                        disabled
+                        class="py-2.5 px-4 pe-9 block max-w-full border border-input rounded-lg
+                                text-sm bg-background
+                                focus:outline-none focus:ring-2 focus:ring-ring
+                                disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="">Selecciona una estructura…</option>
+                </select>
+            </div>
+
+            <!-- Botón de consulta — se habilita al elegir estructura,
+                    fecha/período ya tienen valor por defecto siempre -->
+            <div class="flex justify-end mt-12">
+                <button id="btn-query"
+                        disabled
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg
+                                bg-primary text-primary-foreground text-sm font-medium
+                                hover:opacity-90 transition-opacity
+                                disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                    <span class="material-symbols-outlined" style="font-size:18px"
+                            aria-hidden="true">search</span>
+                    Consultar datos
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Mapa Leaflet — ocupa las 3 columnas restantes -->
+        <div id="map-wrapper" class="hidden border border-border rounded-xl md:col-span-1 lg:col-span-3">
+            <div class="rounded-xl overflow-hidden">
+                <div id="leaflet-map" style="height: 600px; width: 100%;"></div>
+            </div>
+            <!-- Leyenda del semáforo — solo visible cuando el mapa tiene
+                    colores de barrido (no en el flujo de selección plano) -->
+            <div id="map-legend" class="hidden flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 border-t border-border text-xs text-muted-foreground">
+                <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#16a34a"></span>Normal</span>
+                <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#fbbf24"></span>Aviso</span>
+                <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#f97316"></span>Alerta</span>
+                <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#ef4444"></span>Alarma</span>
+                <span class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background:#9333ea"></span>Emergencia</span>
+                <span class="ml-auto">Peor condición del horizonte consultado, por estructura</span>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- ── Estado de carga ── -->
+<div id="weather-loading" class="hidden mb-6">
+    <div class="flex items-center gap-3 p-4 rounded-xl border border-border bg-card">
+        <div class="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin shrink-0"></div>
+        <p class="text-sm text-muted-foreground">Obteniendo datos meteorológicos…</p>
+    </div>
+</div>
+
+<!-- ── Estado de error ── -->
+<div id="weather-error" class="hidden mb-6">
+    <div class="flex items-start gap-3 p-4 rounded-xl border border-destructive/30 bg-destructive/10">
+        <span class="material-symbols-outlined text-destructive shrink-0" aria-hidden="true">error</span>
+        <p id="weather-error-msg" class="text-sm text-destructive"></p>
+    </div>
+</div>
+
+<!-- Reporte -->
+<section id="report" class="bg-stone-100 dark:bg-stone-800 hidden mb-5 p-5 rounded-xl border border-border">
+
+    <!-- Header fijo: Línea · Estructura · Período · Descargar PDF -->
+    <div id="report-header" class="flex flex-col gap-4 border-b border-border pb-5 mb-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">Línea :: Estructura</p>
+            <p id="report-title" class="text-base font-medium text-foreground">—</p>
+        </div>
+        <div class="flex items-center gap-4 sm:flex-row-reverse">
+            <button id="btn-print-report" type="button"
+                    class="inline-flex items-center p-2 rounded-lg border border-border bg-red-500 text-sm font-medium text-white hover:bg-red-600 transition-colors cursor-pointer shrink-0">
+                <span class="material-symbols-outlined" aria-hidden="true">picture_as_pdf</span>
+            </button>
+            <div class="sm:text-right">
+                <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">Período</p>
+                <p id="report-period" class="text-base font-medium text-foreground">—</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de variables meteorológicas — inyectadas por Dashboard.js -->
+    <div id="report-body"></div>
+
+</section>

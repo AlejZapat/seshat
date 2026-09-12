@@ -1,0 +1,132 @@
+<!--
+    Vista Proyectos del módulo projects.
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head>
+    ni <body>, y sin <script>: la lógica vive en src/views-init/projects/projects.js.
+-->
+<section class="min-w-full bg-card border border-border rounded-xl">
+
+    <header class="flex flex-wrap items-center justify-between gap-2 border-b border-border p-4">
+        <div>
+            <label for="projects-search" class="sr-only">Buscar proyectos</label>
+            <input id="projects-search" type="search" placeholder="Buscar..." autocomplete="off"
+                   class="py-2 px-3 block w-56 bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+        </div>
+
+        <button type="button"
+                class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-hover disabled:opacity-50 disabled:pointer-events-none"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="new-project"
+                data-hs-overlay="#new-project">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">add</span>
+            Agregar
+        </button>
+    </header>
+
+    <div id="projects-table"></div>
+
+</section>
+
+<!-- Modal Preline — Confirmar eliminación -->
+<div id="delete-project"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-labelledby="delete-project-label">
+    <div class="sm:max-w-sm sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-overlay border border-overlay-line shadow-2xs rounded-xl pointer-events-auto">
+
+            <div class="flex justify-between items-center py-3 px-4 border-b border-overlay-header">
+                <h2 id="delete-project-label" class="font-semibold">Eliminar proyecto</h2>
+                <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full bg-surface border border-surface-line text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus"
+                        aria-label="Cerrar" data-hs-overlay="#delete-project">
+                    <span class="material-symbols-outlined text-sm" aria-hidden="true">close</span>
+                </button>
+            </div>
+
+            <div class="p-4 overflow-y-auto">
+                <p class="text-sm">¿Eliminar el proyecto <span id="delete-project-name" class="font-semibold"></span>? Esta acción no se puede deshacer.</p>
+            </div>
+
+            <div class="flex justify-end items-center gap-x-3 py-3 px-4 border-t border-overlay-footer">
+                <button type="button"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus"
+                        data-hs-overlay="#delete-project">
+                    Cancelar
+                </button>
+                <button type="button" id="delete-project-confirm"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-red-500 border border-red-500 text-foreground-inverse hover:bg-red-600 focus:outline-hidden focus:bg-red-600 disabled:opacity-50 disabled:pointer-events-none">
+                    Eliminar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Preline — Crear proyecto -->
+<div id="new-project"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-labelledby="new-project-label">
+    <div class="sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-overlay border border-overlay-line shadow-2xs rounded-xl pointer-events-auto">
+            <form id="new-project-form" autocomplete="off" novalidate>
+
+                <div class="flex justify-between items-center py-3 px-4 border-b border-overlay-header">
+                    <h2 id="new-project-label" class="font-semibold">Nuevo proyecto</h2>
+                    <button type="button"
+                            class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full bg-surface border border-surface-line text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus"
+                            aria-label="Cerrar" data-hs-overlay="#new-project">
+                        <span class="material-symbols-outlined text-sm" aria-hidden="true">close</span>
+                    </button>
+                </div>
+
+                <div class="p-4 overflow-y-auto">
+
+                    <div class="mb-4">
+                        <label for="project-type" class="block text-sm font-medium mb-2">Tipo</label>
+                        <select id="project-type" name="typeId" required
+                                class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="project-code" class="block text-sm font-medium mb-2">Código</label>
+                        <input id="project-code" name="code" type="text" maxlength="8" required
+                               aria-describedby="project-code-error"
+                               class="py-2 px-3 block w-32 bg-surface border-border rounded-lg text-sm uppercase focus:border-primary-focus focus:ring-primary-focus">
+                        <p id="project-code-error" class="mt-2 text-sm text-danger hidden" role="alert"></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="project-name" class="block text-sm font-medium mb-2">Nombre</label>
+                        <input id="project-name" name="name" type="text" maxlength="64" required
+                               class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="project-description" class="block text-sm font-medium mb-2">Descripción</label>
+                        <textarea id="project-description" name="description" rows="4"
+                                  class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="project-currency" class="block text-sm font-medium mb-2">Moneda</label>
+                        <select id="project-currency" name="currencyId" required
+                                class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-end items-center gap-x-3 py-3 px-4 border-t border-overlay-footer">
+                    <button type="button"
+                            class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus"
+                            data-hs-overlay="#new-project">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-focus disabled:opacity-50 disabled:pointer-events-none">
+                        Crear
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
