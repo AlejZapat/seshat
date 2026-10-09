@@ -1,0 +1,158 @@
+<!-- ===== HERO ===== -->
+<section class="mx-auto max-w-8xl p-16 md:p-8">
+    <div class="flex flex-col items-center gap-16 lg:flex-row lg:gap-8">
+
+        <div class="flex-1">
+            <p class="font-mono text-xs font-medium">CONTRATACIÓN DE BIENES Y SERVICIOS</p>
+
+            <h1 class="font-display text-6xl my-4">
+                El Proceso y el Contrato, bien armados,
+                <span class="italic text-primary/80">siempre.</span>
+            </h1>
+            <p class="max-w-lg text-lg leading-relaxed text-foreground/80">
+                Bases, Apéndices y Registros del Proceso de Licitación, y Condiciones, Apéndices y Acuerdos del Contrato, desde un solo lugar, con referencias, numeración y formato resueltos.
+            </p>
+
+            <p class="mt-8 text-sm text-foreground/60">Pensado para equipos de proyecto que contratan bienes y servicios.</p>
+        </div>
+
+        <!--
+            Expediente de tamaño fijo: tres hojas con la proporción de una A4,
+            en cascada, con posición y rotación fijas, que no cambian con el
+            viewport. Cada hoja deja ver su código y su título. Bajo sm se
+            oculta, para no achicarlo. Es decorativo.
+        -->
+        <div class="relative hidden h-[32rem] w-[20rem] shrink-0 sm:block" aria-hidden="true">
+
+            <div class="absolute left-0 top-0 -rotate-2 shadow-md flex aspect-[210/297] w-56 flex-col rounded-sm border border-card-line bg-card p-5 font-mono text-xs text-muted-foreground">
+                <p class="text-right">DLN-AD-000-001</p>
+                <p class="mt-3 font-display text-lg leading-tight text-foreground">Bases Generales</p>
+                <p class="mt-1">Proceso de Licitación</p>
+                <div class="mt-auto space-y-1.5">
+                    <div class="h-1 w-full rounded-full bg-card-line"></div>
+                    <div class="h-1 w-5/6 rounded-full bg-card-line"></div>
+                    <div class="h-1 w-4/6 rounded-full bg-card-line"></div>
+                </div>
+                <p class="mt-4 text-right">Versión 2</p>
+            </div>
+
+            <div class="absolute left-12 top-24 rotate-1 shadow-lg flex aspect-[210/297] w-56 flex-col rounded-sm border border-card-line bg-card p-5 font-mono text-xs text-muted-foreground">
+                <p class="text-right">DCN-AD-000-101</p>
+                <p class="mt-3 font-display text-lg leading-tight text-foreground">Condiciones Generales</p>
+                <p class="mt-1">Contrato</p>
+                <div class="mt-auto space-y-1.5">
+                    <div class="h-1 w-full rounded-full bg-card-line"></div>
+                    <div class="h-1 w-5/6 rounded-full bg-card-line"></div>
+                    <div class="h-1 w-4/6 rounded-full bg-card-line"></div>
+                </div>
+                <p class="mt-4 text-right">Versión 0</p>
+            </div>
+
+            <div class="absolute left-24 top-48 -rotate-1 shadow-xl flex aspect-[210/297] w-56 flex-col rounded-sm border border-card-line bg-card p-5 font-mono text-xs text-muted-foreground">
+                <p class="text-right">%CÓDIGO%-Z000</p>
+                <p class="mt-3 font-display text-lg leading-tight text-foreground">Acuerdo de Contrato</p>
+                <p class="mt-1">Para firma de las Partes</p>
+                <div class="mt-auto space-y-1.5">
+                    <div class="h-1 w-full rounded-full bg-card-line"></div>
+                    <div class="h-1 w-5/6 rounded-full bg-card-line"></div>
+                    <div class="h-1 w-4/6 rounded-full bg-card-line"></div>
+                </div>
+                <p class="mt-4 text-right">Versión 0</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<!-- End HERO -->
+
+<!-- ===== TIPOS DE CONTRATO ===== -->
+<section class="mx-auto max-w-8xl p-16 md:p-8" aria-labelledby="contract-types-title">
+    <p class="font-mono text-xs font-medium">TIPOS DE CONTRATO</p>
+    <h2 id="contract-types-title" class="font-display text-3xl my-2">Lo que puede generar</h2>
+    <p class="text-foreground/80">Cada tipo, como Contrato único o Acuerdo Marco.</p>
+
+    <!-- Leyenda: los mismos colores de CONTRACT_TYPES_APPEARANCE, en cover.js -->
+    <ul class="mt-4 flex flex-wrap gap-4 text-sm">
+        <li class="inline-flex items-center gap-x-2">
+            <span class="size-3 rounded-sm border border-amber-300 bg-amber-100 dark:border-amber-700 dark:bg-amber-950" aria-hidden="true"></span>
+            Bienes
+        </li>
+        <li class="inline-flex items-center gap-x-2">
+            <span class="size-3 rounded-sm border border-sky-300 bg-sky-100 dark:border-sky-700 dark:bg-sky-950" aria-hidden="true"></span>
+            Servicios
+        </li>
+        <li class="inline-flex items-center gap-x-2">
+            <span class="size-3 rounded-sm border border-emerald-300 bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950" aria-hidden="true"></span>
+            Obras
+        </li>
+    </ul>
+
+    <div id="contract-types" class="mt-8 flex justify-center overflow-x-auto rounded-xl border border-card-line bg-card p-6"></div>
+</section>
+<!-- End TIPOS DE CONTRATO -->
+
+<!-- ===== FLUJO DEL PROCESO ===== -->
+<section class="mx-auto max-w-8xl p-16 md:p-8" aria-labelledby="process-flow-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="font-mono text-xs font-medium">PROCESO DE LICITACIÓN</p>
+            <h2 id="process-flow-title" class="font-display text-3xl my-2">Del llamado al cierre, por etapas</h2>
+            <p class="text-foreground/80">Haz clic en una etapa para ver su detalle.</p>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="button" id="process-flow-expand"
+                    class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus">
+                <span class="material-symbols-outlined text-sm" aria-hidden="true">unfold_more</span>
+                Expandir todo
+            </button>
+            <button type="button" id="process-flow-collapse"
+                    class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus">
+                <span class="material-symbols-outlined text-sm" aria-hidden="true">unfold_less</span>
+                Contraer todo
+            </button>
+        </div>
+    </div>
+
+    <div id="process-flow" class="mt-8 flex justify-center overflow-x-auto rounded-xl border border-card-line bg-card p-6"></div>
+</section>
+<!-- End FLUJO DEL PROCESO -->
+
+<!-- ===== CONTRATO ===== -->
+<section class="mx-auto max-w-8xl p-16 md:p-8" aria-labelledby="contract-flows-title">
+    <p class="font-mono text-xs font-medium">CONTRATO</p>
+    <h2 id="contract-flows-title" class="font-display text-3xl my-2">Subprocesos durante la ejecución</h2>
+    <p class="text-foreground/80">Plazos por defecto de las Condiciones Generales; las Condiciones Particulares pueden cambiarlos.</p>
+
+    <!--
+        Pestañas y paneles: los arma cover.js desde CONTRACT_FLOWS, incluido
+        el <nav role="tablist">. Si el nav estuviera aquí, el autoInit de
+        Preline que corre al cargar la vista lo registraría vacío y no
+        volvería a registrarlo con sus botones.
+    -->
+    <div class="mt-8 rounded-xl border border-card-line bg-card p-6">
+        <div id="contract-flow-tabs" class="border-b border-line-2"></div>
+        <div id="contract-flow-panels" class="mt-6"></div>
+    </div>
+</section>
+<!-- End CONTRATO -->
+
+<!-- ===== DOCUMENTOS ===== -->
+<section class="mx-auto max-w-8xl p-16 md:p-8" aria-labelledby="documents-title">
+    <p class="font-mono text-xs font-medium">DOCUMENTOS</p>
+    <h2 id="documents-title" class="font-display text-3xl my-2">Lo que genera la página de Contratación</h2>
+    <p class="text-foreground/80">Los mismos documentos para todos los tipos de contrato; cambia su contenido.</p>
+
+    <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div class="overflow-x-auto rounded-xl border border-card-line bg-card p-6">
+            <h3 class="mb-4 font-semibold">Proceso de Licitación</h3>
+            <div id="process-tree"></div>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-card-line bg-card p-6">
+            <h3 class="mb-4 font-semibold">Contrato</h3>
+            <div id="contract-tree"></div>
+        </div>
+    </div>
+</section>
+<!-- End DOCUMENTOS -->
