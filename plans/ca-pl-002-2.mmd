@@ -1,0 +1,9 @@
+flowchart TB
+    A["<b>Instancia que autorizó el proyecto</b><br/>decide más allá de la Reserva de Gestión"]
+    B["<b>Patrocinador y Comité de Dirección</b><br/>Reserva de Gestión y reserva de plazo"]
+    C["<b>Jefe del Proyecto</b><br/>Contingencia y holgura del cronograma"]
+    D["<b>Responsables y Gestores del Contrato</b><br/>su especialidad y su contrato"]
+    E["<b>Contratistas</b><br/>conforme a su contrato"]
+    A <-->|"delega ↓ · escala ↑"| B <-->|"delega ↓ · escala ↑"| C <-->|"asigna ↓ · escala ↑"| D <-->|"administra ↓ · informa ↑"| E
+    classDef level fill:#ffffff,stroke:#333333,color:#000000
+    class A,B,C,D,E level
