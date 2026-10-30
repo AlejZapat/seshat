@@ -1,0 +1,1 @@
+var e=``+new URL(`project-progress-deco-closing-DnItrgOO.png`,import.meta.url).href;export{e as default};

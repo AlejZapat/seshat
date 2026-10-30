@@ -1,0 +1,284 @@
+<!--
+    @file views/default.html
+    @description Vista inicial de Seshat.
+    Se carga al iniciar la app y al hacer clic en el logo.
+    No activa ningún ítem del nav primario.
+
+    Fragmento: Loader lo inyecta en #content-area, que ya es el <main>
+    del shell y aporta su propio padding y scroll. Por eso aquí no hay
+    <main> ni contenedor de altura completa.
+
+    Los enlaces a módulos llevan data-module-link para que un futuro
+    src/views-init/default.js pueda interceptarlos y navegar con
+    history.pushState + loader.loadFromURL(). Sin ese init funcionan
+    igual: el clic recarga la página y Loader lee la URL al arrancar.
+-->
+<div class="max-w-5xl mx-auto space-y-14 pb-10">
+
+    <!-- ============================================
+         Identidad
+         ============================================ -->
+    <header class="pt-2">
+
+        <div class="flex items-baseline gap-3">
+            <h1 class="text-3xl font-semibold text-foreground">Seshat</h1>
+            <span class="text-sm text-muted-foreground-1">v1.0.0</span>
+        </div>
+
+        <p class="mt-3 max-w-2xl text-base text-muted-foreground-2">
+            Redacta, versiona y controla contratos de construcción, y sigue
+            los proyectos que dependen de ellos, desde un mismo lugar.
+        </p>
+
+    </header>
+
+    <!-- ============================================
+         Módulos
+         ============================================ -->
+    <section aria-labelledby="modules-title">
+
+        <h2 id="modules-title" class="text-lg font-semibold text-foreground">
+            Módulos
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground-2">
+            Los mismos que encuentras en la barra lateral.
+        </p>
+
+        <ul class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <li>
+                <a href="?module=projects"
+                    data-module-link
+                    class="group block h-full p-5 rounded-xl
+                           bg-card border border-card-line
+                           hover:bg-layer-hover
+                           focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="material-symbols-outlined text-muted-foreground-1
+                                 group-hover:text-primary transition-colors"
+                        aria-hidden="true">stacks</span>
+                    <h3 class="mt-2 text-base font-semibold text-foreground">Proyectos</h3>
+                    <p class="mt-1 text-sm text-muted-foreground-2">
+                        Tablero de avance, fichas de proyecto, programas y portafolios.
+                    </p>
+                </a>
+            </li>
+
+            <li>
+                <a href="?module=contracts"
+                    data-module-link
+                    class="group block h-full p-5 rounded-xl
+                           bg-card border border-card-line
+                           hover:bg-layer-hover
+                           focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="material-symbols-outlined text-muted-foreground-1
+                                 group-hover:text-primary transition-colors"
+                        aria-hidden="true">description</span>
+                    <h3 class="mt-2 text-base font-semibold text-foreground">Contratos</h3>
+                    <p class="mt-1 text-sm text-muted-foreground-2">
+                        Suministro, servicios a plazo, construcción de obras, diseño y
+                        construcción, EPC, marco y mantenimiento.
+                    </p>
+                </a>
+            </li>
+
+            <li>
+                <a href="?module=weather"
+                    data-module-link
+                    class="group block h-full p-5 rounded-xl
+                           bg-card border border-card-line
+                           hover:bg-layer-hover
+                           focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="material-symbols-outlined text-muted-foreground-1
+                                 group-hover:text-primary transition-colors"
+                        aria-hidden="true">weather_mix</span>
+                    <h3 class="mt-2 text-base font-semibold text-foreground">Clima</h3>
+                    <p class="mt-1 text-sm text-muted-foreground-2">
+                        Datos meteorológicos por estación, análisis estadístico y
+                        escaneo masivo de coordenadas.
+                    </p>
+                </a>
+            </li>
+
+            <!--
+                Enlace directo a la vista pmi-pmp: el módulo tests no declara
+                ningún ítem con default:true en SECONDARY_NAV, así que
+                '?module=tests' a secas no redirige y termina buscando
+                views/tests/default.html.
+            -->
+            <li>
+                <a href="?module=tests&view=pmi-pmp"
+                    data-module-link
+                    class="group block h-full p-5 rounded-xl
+                           bg-card border border-card-line
+                           hover:bg-layer-hover
+                           focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="material-symbols-outlined text-muted-foreground-1
+                                 group-hover:text-primary transition-colors"
+                        aria-hidden="true">quiz</span>
+                    <h3 class="mt-2 text-base font-semibold text-foreground">Exámenes</h3>
+                    <p class="mt-1 text-sm text-muted-foreground-2">
+                        Simulador de preguntas para la certificación PMI-PMP, con
+                        calificación y resultados por área.
+                    </p>
+                </a>
+            </li>
+
+        </ul>
+
+    </section>
+
+    <!-- ============================================
+         Stack
+         ============================================ -->
+    <section aria-labelledby="stack-title">
+
+        <h2 id="stack-title" class="text-lg font-semibold text-foreground">
+            Construido con
+        </h2>
+        <p class="mt-1 text-sm text-muted-foreground-2">
+            JavaScript sin framework. Cada pieza resuelve una sola cosa.
+        </p>
+
+        <ul class="mt-5 divide-y divide-line-2 border-y border-line-2">
+
+            <li>
+                <a href="https://vite.dev" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Vite</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Empaquetado y servidor de desarrollo
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Tailwind CSS</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Estilos por utilidades y tokens de tema claro y oscuro
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://preline.co/docs/" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Preline UI</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Componentes accesibles: menús, acordeones, modales
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://fonts.google.com/icons" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Material Symbols</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Iconografía de toda la interfaz
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://apexcharts.com" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">ApexCharts</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Gráficos
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Leaflet</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Mapas
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://docx.js.org" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">docx</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Exportación a documentos Word
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer"
+                    class="flex items-baseline gap-x-4 py-3
+                           hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus
+                           transition-colors">
+                    <span class="w-40 shrink-0 text-sm font-medium text-primary">Open-Meteo</span>
+                    <span class="text-sm text-muted-foreground-2">
+                        Fuente de datos meteorológicos históricos y de pronóstico
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+
+    </section>
+
+    <!-- ============================================
+         Arquitectura
+         ============================================ -->
+    <section aria-labelledby="architecture-title">
+
+        <h2 id="architecture-title" class="text-lg font-semibold text-foreground">
+            Cómo está armado
+        </h2>
+
+        <p class="mt-3 max-w-2xl text-sm text-muted-foreground-2">
+            Seshat es una aplicación de una sola página. El shell se carga una vez
+            y un cargador central inyecta cada vista bajo demanda, junto con el
+            script que la inicializa.
+        </p>
+
+        <p class="mt-3 max-w-2xl text-sm text-muted-foreground-2">
+            La lógica compartida no vive aquí: autenticación, gráficos, mapas,
+            exámenes, generación de documentos y acceso a datos vienen de un motor
+            común que otras aplicaciones pueden reutilizar. Seshat aporta sus
+            vistas, sus datos y su configuración de navegación.
+        </p>
+
+    </section>
+
+    <!-- ============================================
+         Autoría
+         ============================================ -->
+    <footer class="pt-6 border-t border-footer-line">
+        <p class="text-sm text-muted-foreground-1">
+            Desarrollado por Luis Alejandro Zapata · 2026 ·
+            <a href="mailto:alejandro.zapata@gmail.com"
+                class="text-primary hover:underline
+                       focus:outline-hidden focus:underline">Contacto</a>
+        </p>
+    </footer>
+
+</div>
