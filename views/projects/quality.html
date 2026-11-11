@@ -1,0 +1,50 @@
+<!--
+    Vista Verificación de un proyecto (vista `quality`, área Cronograma del
+    menú del proyecto): los criterios cuantitativos de la Lista de
+    Verificación del Cronograma (CA-P-007/F-001) en una revisión y un corte,
+    con las tareas, los hitos y las relaciones que cuentan en cada criterio.
+    Exige `pid` en la URL. Fragmento inyectado en #content-area por
+    ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica vive
+    en src/views-init/projects/quality.js (la verificación, en
+    src/utilities/schedule-quality.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<div id="quality-empty" class="bg-card border border-border rounded-xl p-4 text-sm" hidden></div>
+
+<section id="quality-view" aria-labelledby="quality-heading" hidden>
+    <h2 id="quality-heading" class="sr-only">Verificación del cronograma</h2>
+
+    <div class="flex flex-wrap items-end gap-4 mb-3 text-sm">
+        <div>
+            <label for="quality-revision" class="block font-medium mb-1">Revisión</label>
+            <select id="quality-revision"
+                    class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+        </div>
+        <div>
+            <label for="quality-cut" class="block font-medium mb-1">Corte</label>
+            <select id="quality-cut"
+                    class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+        </div>
+    </div>
+
+    <p id="quality-note" class="mb-4 text-sm text-muted-foreground" aria-live="polite"></p>
+
+    <div id="quality-stats" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4"></div>
+
+    <section class="min-w-full bg-card border border-border rounded-xl mb-4" aria-labelledby="quality-criteria-heading">
+        <header class="border-b border-border p-4">
+            <h3 id="quality-criteria-heading" class="font-semibold">Criterios cuantitativos (CA-P-007/F-001)</h3>
+        </header>
+        <div id="quality-table"></div>
+    </section>
+
+    <section class="bg-card border border-border rounded-xl p-4 text-sm" aria-labelledby="quality-details-heading">
+        <h3 id="quality-details-heading" class="mb-1 font-semibold">Detalle</h3>
+        <p class="mb-3 text-muted-foreground">Las tareas, los hitos y las relaciones que cuentan en cada criterio que no cumple o que se informa. Cada una abre el Diagrama de Gantt en su fila.</p>
+        <div id="quality-details" class="space-y-2"></div>
+    </section>
+</section>

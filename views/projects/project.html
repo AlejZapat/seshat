@@ -1,0 +1,159 @@
+<!--
+    Vista Tablero de un proyecto (vista `project`, la primera del menú del
+    proyecto; pasos 7a y 7c). Exige `pid` en la URL. Fragmento inyectado en
+    #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin
+    <script>: la lógica vive en src/views-init/projects/project.js (el
+    resumen, el análisis y las curvas, en src/utilities/progress-curves.js;
+    el encabezado y el menú, en src/utilities/project-header.js).
+
+    Dos pestañas (plugin de pestañas de Preline: paneles de una misma
+    página): Resumen, la lámina "El proyecto en una mirada" de la
+    Presentación del Informe Mensual (CA-P-004/F-003), con los hitos; y
+    Análisis, con la tendencia de los hitos.
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<!-- Avance: resumen y análisis en el corte elegido -->
+<section id="project-curves" aria-labelledby="project-curves-heading" hidden>
+    <h2 id="project-curves-heading" class="sr-only">Avance del proyecto</h2>
+
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-4">
+        <nav class="flex gap-x-1 bg-surface rounded-lg p-1" aria-label="Tablero" role="tablist" aria-orientation="horizontal">
+            <button type="button" id="project-tab-summary" role="tab" aria-selected="true" aria-controls="project-panel-summary" data-hs-tab="#project-panel-summary"
+                    class="hs-tab-active:bg-card hs-tab-active:text-foreground hs-tab-active:shadow-2xs py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground focus:outline-hidden focus:text-foreground active">
+                Resumen
+            </button>
+            <button type="button" id="project-tab-analysis" role="tab" aria-selected="false" aria-controls="project-panel-analysis" data-hs-tab="#project-panel-analysis"
+                    class="hs-tab-active:bg-card hs-tab-active:text-foreground hs-tab-active:shadow-2xs py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground focus:outline-hidden focus:text-foreground">
+                Análisis
+            </button>
+        </nav>
+        <div class="text-sm">
+            <label for="project-curves-cut" class="block font-medium mb-1">Corte</label>
+            <select id="project-curves-cut"
+                    class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+        </div>
+    </div>
+
+    <!-- Resumen: El proyecto en una mirada -->
+    <div id="project-panel-summary" role="tabpanel" aria-labelledby="project-tab-summary">
+        <div id="project-summary-stats" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        <div class="grid lg:grid-cols-7 gap-4 mt-4">
+            <!-- El gráfico ocupa el alto que la grilla le da a la tarjeta: ApexCharts mide el 100 % en el
+                 padre de su contenedor, que por eso va fuera del flujo (absolute), para que el gráfico no
+                 fije a su vez el alto de la tarjeta -->
+            <div class="lg:col-span-4 flex flex-col bg-card border border-border rounded-xl">
+                <header class="border-b border-border p-4">
+                    <h3 class="font-semibold">Curva S</h3>
+                    <p id="project-summary-note" class="mt-1 text-xs text-muted-foreground"></p>
+                </header>
+                <div class="relative flex-1 min-h-75 m-2"><div id="project-summary-curve" class="absolute inset-0"></div></div>
+            </div>
+            <div class="lg:col-span-3 bg-card border border-border rounded-xl">
+                <header class="border-b border-border p-4">
+                    <h3 class="font-semibold">Estado por dimensión</h3>
+                    <p class="mt-1 text-xs text-muted-foreground">Resumen Ejecutivo del Informe Mensual (CA-P-004/F-002)</p>
+                </header>
+                <ul id="project-dimensions" class="divide-y divide-border text-sm"></ul>
+            </div>
+        </div>
+        <!-- Hitos relevantes, como la lista de la lámina "Programa e hitos" (paso 7d) -->
+        <div class="mt-4 bg-card border border-border rounded-xl">
+            <header class="flex flex-wrap items-end justify-between gap-4 border-b border-border p-4">
+                <div>
+                    <h3 class="font-semibold">Hitos</h3>
+                    <p id="project-milestones-note" class="mt-1 text-xs text-muted-foreground"></p>
+                </div>
+                <div class="text-sm">
+                    <label for="project-operation-milestone" class="block font-medium mb-1">Hito de entrada en operación</label>
+                    <select id="project-operation-milestone"
+                            class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus disabled:opacity-50 disabled:pointer-events-none"></select>
+                </div>
+            </header>
+            <ol id="project-milestones" class="grid sm:grid-cols-2 xl:grid-cols-3 divide-y sm:divide-y-0 divide-border text-sm"></ol>
+        </div>
+    </div>
+
+    <!-- Análisis -->
+    <div id="project-panel-analysis" class="hidden" role="tabpanel" aria-labelledby="project-tab-analysis">
+        <div class="flex flex-wrap items-end gap-4 mb-4 text-sm">
+            <div>
+                <label for="project-curves-method" class="block font-medium mb-1">Base de cálculo</label>
+                <select id="project-curves-method"
+                        class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+            </div>
+            <div>
+                <label for="project-curves-scale" class="block font-medium mb-1">Escala</label>
+                <select id="project-curves-scale"
+                        class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    <option value="" selected>Automática</option>
+                    <option value="day">Días</option>
+                    <option value="week">Semanas</option>
+                    <option value="month">Meses</option>
+                    <option value="quarter">Trimestres</option>
+                </select>
+            </div>
+            <div>
+                <label for="project-curves-mode" class="block font-medium mb-1">Curva real</label>
+                <select id="project-curves-mode"
+                        class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    <option value="reported" selected>Según se informó (pesos de cada corte)</option>
+                    <option value="restated">Reexpresada con la revisión del corte</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-x-3 pb-2">
+                <input id="project-curves-envelope" type="checkbox" role="switch"
+                       class="relative w-11 h-6 p-px bg-surface-1 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-primary-focus disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:bg-primary checked:text-primary checked:border-primary focus:checked:border-primary before:inline-block before:size-5 before:bg-white checked:before:bg-primary-foreground before:translate-x-0 checked:before:translate-x-full before:rounded-full before:shadow-sm before:transform before:transition before:ease-in-out before:duration-200"
+                       title="Avance con todas las tareas en sus fechas tempranas y con todas en sus fechas tardías">
+                <label for="project-curves-envelope" class="font-medium">Envolvente temprana–tardía</label>
+            </div>
+        </div>
+
+        <p id="project-curves-note" class="mb-4 text-sm text-muted-foreground" aria-live="polite"></p>
+
+        <div id="project-indicators" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <div class="mt-4 bg-card border border-border rounded-xl">
+            <header class="border-b border-border p-4">
+                <h3 class="font-semibold">Curvas de avance</h3>
+            </header>
+            <div class="p-4 text-sm">
+                <div id="project-curves-cumulative"></div>
+                <h4 class="mt-6 font-medium">Avance por período</h4>
+                <div id="project-curves-period" class="mt-2"></div>
+                <details class="mt-4">
+                    <summary class="cursor-pointer font-medium">Tabla de valores</summary>
+                    <div id="project-curves-table" class="mt-3 overflow-x-auto"></div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Tendencia de los hitos (MTA, paso 7d) -->
+        <div class="mt-4 bg-card border border-border rounded-xl">
+            <header class="border-b border-border p-4">
+                <h3 class="font-semibold">Tendencia de los hitos (MTA)</h3>
+                <p id="project-trend-note" class="mt-1 text-xs text-muted-foreground"></p>
+            </header>
+            <div class="p-4 text-sm">
+                <div id="project-trend-chart"></div>
+                <details class="mt-4">
+                    <summary class="cursor-pointer font-medium">Tabla de valores</summary>
+                    <div id="project-trend-table" class="mt-3 overflow-x-auto"></div>
+                </details>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sin revisiones: el Tablero remite a Revisiones -->
+<div id="project-no-revisions" class="bg-card border border-border rounded-xl p-4 text-sm" hidden></div>
+
+<!-- Datos generales del proyecto -->
+<section id="project-detail" class="mt-6 bg-card border border-border rounded-xl" aria-labelledby="project-detail-heading" hidden>
+    <header class="border-b border-border p-4">
+        <h2 id="project-detail-heading" class="font-semibold">Datos generales</h2>
+    </header>
+    <dl id="project-detail-list" class="grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2 p-4 text-sm"></dl>
+</section>

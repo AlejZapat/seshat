@@ -1,0 +1,14 @@
+<!--
+    @file views/403.html
+    @description Vista de error 403 — acceso prohibido.
+    Cargada por Loader cuando la ruta solicitada corresponde a un ítem de
+    navegación marcado con `disabled: true` en PRIMARY_NAV o SECONDARY_NAV.
+    A diferencia de 404.html, la vista sí existe: lo que no está permitido
+    es llegar a ella.
+-->
+<div class="flex flex-col items-center justify-center h-full text-center gap-4">
+    <h1 class="text-8xl font-semibold">403</h1>
+    <h2 class="text-3xl font-medium text-foreground">Acceso no disponible</h2>
+    <p class="text-md text-muted-foreground mt-1">Esta sección está deshabilitada por ahora.</p>
+    <a href="./" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover">Volver al inicio</a>
+</div>

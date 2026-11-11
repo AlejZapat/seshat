@@ -1,0 +1,122 @@
+<!--
+    Vista Diagrama de Gantt de un proyecto (vista `schedule`, área
+    Cronograma del menú del proyecto; pasos 7b y 8): tabla y Gantt
+    virtualizados de una revisión, con el avance planeado por tarea y el
+    peso de cada nodo de la EDT; los cortes de avance de la revisión vigente
+    se crean, corrigen y eliminan aquí. Exige `pid` en la URL. Fragmento inyectado en
+    #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin
+    <script>: la lógica vive en src/views-init/projects/schedule.js (la
+    grilla, en src/utilities/schedule-grid/; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<div id="schedule-empty" class="bg-card border border-border rounded-xl p-4 text-sm" hidden></div>
+
+<section id="schedule-view" class="flex flex-col h-[calc(100dvh-9.5rem)] min-h-96" aria-labelledby="schedule-heading" hidden>
+    <h2 id="schedule-heading" class="sr-only">Diagrama de Gantt</h2>
+
+    <!-- Franja del proyecto: revisión, corte y acciones del corte -->
+    <div class="flex flex-wrap items-center gap-3 mb-3 text-sm">
+        <div class="flex items-center gap-x-2">
+            <label for="schedule-revision" class="font-medium">Revisión</label>
+            <select id="schedule-revision"
+                    class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+        </div>
+        <div class="flex items-center gap-x-2">
+            <label for="schedule-cut" class="font-medium">Corte</label>
+            <select id="schedule-cut"
+                    class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+        </div>
+        <!-- Cortes de avance de la revisión vigente (paso 8): botones de solo ícono, con su nombre en el title -->
+        <div id="schedule-cut-actions" class="flex gap-2" hidden>
+            <button type="button" id="schedule-cut-new" title="Nuevo corte: registrar el avance a mano" aria-label="Nuevo corte"
+                    class="size-9.5 inline-flex items-center justify-center text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-focus disabled:opacity-50 disabled:pointer-events-none">
+                <span class="material-symbols-outlined text-base" aria-hidden="true">add_task</span>
+            </button>
+            <button type="button" id="schedule-cut-load" title="Cargar corte: el avance desde el archivo de una actualización" aria-label="Cargar corte"
+                    class="size-9.5 inline-flex items-center justify-center text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none">
+                <span class="material-symbols-outlined text-base" aria-hidden="true">upload_file</span>
+            </button>
+            <input type="file" id="schedule-cut-file" class="hidden" tabindex="-1" aria-hidden="true">
+            <button type="button" id="schedule-cut-edit" title="Editar corte: corregir el último" aria-label="Editar corte"
+                    class="size-9.5 inline-flex items-center justify-center text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none">
+                <span class="material-symbols-outlined text-base" aria-hidden="true">edit</span>
+            </button>
+            <button type="button" id="schedule-cut-delete" aria-label="Eliminar corte"
+                    class="size-9.5 inline-flex items-center justify-center text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none">
+                <span class="material-symbols-outlined text-base" aria-hidden="true">delete</span>
+            </button>
+        </div>
+        <!-- basis-0: toma el espacio que queda en la fila, sin bajar a otra; completa, en su title -->
+        <p id="schedule-note" class="flex-1 basis-0 min-w-0 truncate text-xs text-muted-foreground" aria-live="polite"></p>
+    </div>
+
+    <!-- Corte desde el archivo de una actualización: resumen y guardar, o las diferencias con la red y su informe -->
+    <div id="schedule-load-bar" class="mb-3 p-3 bg-card border border-primary-line rounded-xl text-sm" aria-live="polite" hidden></div>
+
+    <!-- Edición de un corte: fecha de datos, guardar y cancelar, y observaciones de la validación -->
+    <div id="schedule-edit-bar" class="mb-3 p-3 bg-card border border-primary-line rounded-xl text-sm" hidden>
+        <div class="flex flex-wrap items-end gap-4">
+            <p id="schedule-edit-title" class="font-semibold self-center"></p>
+            <div>
+                <label for="schedule-edit-date" class="block font-medium mb-1">Fecha de datos</label>
+                <input id="schedule-edit-date" type="datetime-local" required
+                       class="py-2 px-3 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus disabled:opacity-70">
+            </div>
+            <div class="ms-auto flex gap-2">
+                <button type="button" id="schedule-edit-cancel"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus">
+                    Cancelar
+                </button>
+                <button type="button" id="schedule-edit-save"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-primary border border-primary-line text-primary-foreground hover:bg-primary-hover focus:outline-hidden focus:bg-primary-focus disabled:opacity-50 disabled:pointer-events-none">
+                    Guardar corte
+                </button>
+            </div>
+        </div>
+        <p class="mt-2 text-xs text-muted-foreground">Avance físico de 0 a 100; un fin real exige 100 % y un comienzo real; ninguna fecha real después de la fecha de datos. La duración restante vacía se calcula desde el avance. Enter pasa a la tarea siguiente.</p>
+        <div id="schedule-edit-issues" class="mt-3" aria-live="polite"></div>
+    </div>
+
+    <!-- Tarjeta de la grilla: franja de la herramienta (la arma schedule.js) y grilla -->
+    <div class="flex flex-col flex-1 min-h-0 bg-card border border-border rounded-xl overflow-hidden">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1.5 border-b border-border text-sm">
+            <div id="schedule-tools" role="toolbar" aria-label="Herramientas del diagrama" class="flex items-center gap-0.5"></div>
+        </div>
+        <div id="schedule-grid" class="relative flex-1 min-h-0 overflow-auto"></div>
+    </div>
+</section>
+
+<!-- Modal Preline — Confirmar la eliminación del último corte -->
+<div id="delete-cut"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-labelledby="delete-cut-label">
+    <div class="sm:max-w-md sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-overlay border border-overlay-line shadow-2xs rounded-xl pointer-events-auto">
+            <div class="flex justify-between items-center py-3 px-4 border-b border-overlay-header">
+                <h2 id="delete-cut-label" class="font-semibold">Eliminar corte</h2>
+                <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full bg-surface border border-surface-line text-surface-foreground hover:bg-surface-hover focus:outline-hidden focus:bg-surface-focus"
+                        aria-label="Cerrar" data-hs-overlay="#delete-cut">
+                    <span class="material-symbols-outlined text-sm" aria-hidden="true">close</span>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto">
+                <p id="delete-cut-detail" class="text-sm"></p>
+                <p class="text-sm mt-2">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="flex justify-end items-center gap-x-3 py-3 px-4 border-t border-overlay-footer">
+                <button type="button" class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus" data-hs-overlay="#delete-cut">
+                    Cancelar
+                </button>
+                <button type="button" id="delete-cut-confirm"
+                        class="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-red-500 border border-red-500 text-foreground-inverse hover:bg-red-600 focus:outline-hidden focus:bg-red-600 disabled:opacity-50 disabled:pointer-events-none">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
