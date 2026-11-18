@@ -1,0 +1,91 @@
+<!--
+    Vista Contratos y Estados de Avance de un proyecto (vista `cost-contracts`,
+    área Costos del menú del proyecto): el registro mínimo de los contratos
+    para el control de los costos. Cada contrato con su lista de precios (las
+    partidas del Apéndice "Cantidades y Precios", cada una con su Cuenta de
+    Control) y sus Estados de Avance (CA-P-013/F-006). Exige `pid` en la URL.
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni
+    <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/cost-contracts.js (las reglas, en
+    src/utilities/progress-statements.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<section id="cost-contracts-view" aria-labelledby="cost-contracts-heading" hidden>
+    <h2 id="cost-contracts-heading" class="sr-only">Contratos y Estados de Avance</h2>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <p id="cost-contracts-note" class="text-sm text-muted-foreground" aria-live="polite"></p>
+        <div id="cost-contracts-actions" class="flex items-center gap-2"></div>
+    </div>
+
+    <section class="min-w-0 bg-card border border-border rounded-xl mb-4" aria-labelledby="cost-contracts-list-heading">
+        <header class="border-b border-border p-4">
+            <h3 id="cost-contracts-list-heading" class="font-semibold">Contratos</h3>
+        </header>
+        <div id="cost-contracts-list" class="overflow-x-auto"></div>
+    </section>
+
+    <div id="cost-contracts-detail" hidden>
+        <section class="bg-card border border-border rounded-xl mb-4" aria-labelledby="cost-contracts-form-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="cost-contracts-form-heading" class="font-semibold">Contrato</h3>
+            </header>
+            <form id="cost-contracts-form" class="p-4 text-sm" novalidate autocomplete="off">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="cost-contracts-code" class="mb-1.5 block text-xs font-medium text-muted-foreground">Código</label>
+                        <input type="text" id="cost-contracts-code" name="code" maxlength="24" required
+                               class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="cost-contracts-name" class="mb-1.5 block text-xs font-medium text-muted-foreground">Nombre</label>
+                        <input type="text" id="cost-contracts-name" name="name" maxlength="96" required
+                               class="py-2 px-3 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus">
+                    </div>
+                    <div>
+                        <label for="cost-contracts-payment" class="mb-1.5 block text-xs font-medium text-muted-foreground">Forma de pago</label>
+                        <select id="cost-contracts-payment" name="paymentType" required
+                                class="py-2 px-3 pe-9 block w-full bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+                    </div>
+                </div>
+                <p id="cost-contracts-form-error" class="mt-3 text-red-600 dark:text-red-400" role="alert" hidden></p>
+                <div id="cost-contracts-form-actions" class="mt-4 flex flex-wrap items-center gap-2"></div>
+            </form>
+        </section>
+
+        <div id="cost-contracts-saved" hidden>
+            <section class="min-w-0 bg-card border border-border rounded-xl mb-4" aria-labelledby="cost-contracts-items-heading">
+                <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+                    <h3 id="cost-contracts-items-heading" class="font-semibold">Lista de precios</h3>
+                    <div class="flex flex-wrap items-center gap-2 text-sm">
+                        <label for="cost-contracts-account" class="font-medium">Cuenta de Control</label>
+                        <select id="cost-contracts-account"
+                                class="py-2 px-3 pe-9 block bg-surface border-border rounded-lg text-sm focus:border-primary-focus focus:ring-primary-focus"></select>
+                        <span id="cost-contracts-items-actions" class="flex items-center gap-2"></span>
+                    </div>
+                </header>
+                <div class="p-4 text-sm">
+                    <p id="cost-contracts-items-note" class="text-muted-foreground"></p>
+                    <div id="cost-contracts-items-result" class="mt-3" role="status" hidden></div>
+                </div>
+                <div id="cost-contracts-items" class="overflow-x-auto"></div>
+            </section>
+
+            <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="cost-contracts-statements-heading">
+                <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+                    <h3 id="cost-contracts-statements-heading" class="font-semibold">Estados de Avance</h3>
+                    <div id="cost-contracts-statements-actions" class="flex items-center gap-2"></div>
+                </header>
+                <div id="cost-contracts-pending" class="border-b border-border p-4 text-sm" role="status" hidden></div>
+                <div id="cost-contracts-statements" class="overflow-x-auto"></div>
+            </section>
+        </div>
+    </div>
+
+    <input type="file" id="cost-contracts-list-file" accept=".xlsx" class="hidden" aria-label="Libro de la lista de precios del contrato">
+    <input type="file" id="cost-contracts-statement-file" accept=".xlsx" class="hidden" aria-label="Libro del Estado de Avance">
+</section>

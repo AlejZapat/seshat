@@ -1,0 +1,46 @@
+<!--
+    Vista Registro de Riesgos de un proyecto (vista `risks`, área Riesgos del
+    menú del proyecto): el Registro de Riesgos (CA-P-014/F-002). Los criterios
+    de la valoración, el resumen del registro, la tabla de Riesgos con su ficha
+    en el panel lateral, y las revisiones mensuales. Exige `pid` en la URL.
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni
+    <body>, y sin <script>: la lógica vive en src/views-init/projects/risks.js
+    (las reglas, en src/utilities/risk-register.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<section id="risks-view" aria-labelledby="risks-heading" hidden>
+    <h2 id="risks-heading" class="sr-only">Registro de Riesgos</h2>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <p id="risks-note" class="text-sm text-muted-foreground" aria-live="polite"></p>
+        <div id="risks-actions" class="flex items-center gap-1"></div>
+    </div>
+    <input type="file" id="risks-file" accept=".xlsx" hidden>
+    <div id="risks-result" class="mb-4 rounded-xl border border-border bg-card p-4 text-sm" aria-live="polite" hidden></div>
+
+    <div id="risks-stats" class="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4 mb-4"></div>
+
+    <section class="min-w-0 bg-card border border-border rounded-xl mb-4" aria-labelledby="risks-list-heading">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+            <h3 id="risks-list-heading" class="font-semibold">Riesgos</h3>
+            <div id="risks-list-actions" class="flex flex-wrap items-center gap-2"></div>
+        </header>
+        <div id="risks-list" class="overflow-x-auto"></div>
+    </section>
+
+    <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risks-reviews-heading">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+            <div>
+                <h3 id="risks-reviews-heading" class="font-semibold">Revisiones mensuales</h3>
+                <p id="risks-reviews-last" class="text-xs text-muted-foreground"></p>
+            </div>
+            <div id="risks-reviews-actions" class="flex flex-wrap items-end gap-2"></div>
+        </header>
+        <p id="risks-reviews-error" class="px-4 pt-3 text-sm text-red-600 dark:text-red-400" role="alert" hidden></p>
+        <div id="risks-reviews" class="overflow-x-auto"></div>
+    </section>
+</section>

@@ -1,0 +1,47 @@
+<!--
+    Vista EDT y Diccionario de un proyecto (vista `scope`, área Alcance del
+    menú del proyecto): los elementos de la EDT de la revisión vigente hasta
+    los Paquetes de Trabajo, con su comienzo, su fin y su avance, y su
+    Diccionario (CA-P-006/F-002). Exige `pid` en la URL. Fragmento inyectado
+    en #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin
+    <script>: la lógica vive en src/views-init/projects/scope.js (el
+    registro, en src/utilities/scope-dictionary.js y scope-repository.js; el
+    encabezado y el menú, en src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<div id="scope-empty" class="bg-card border border-border rounded-xl p-4 text-sm" hidden></div>
+
+<section id="scope-view" aria-labelledby="scope-heading" class="flex flex-col h-[calc(100dvh-9.5rem)] min-h-96" hidden>
+    <h2 id="scope-heading" class="sr-only">EDT y Diccionario</h2>
+
+    <!-- Franja del registro: qué se muestra y las acciones del Diccionario (íconos con su nombre en el title) -->
+    <div class="flex flex-wrap items-center gap-3 mb-3 text-sm">
+        <p id="scope-note" class="flex-1 basis-0 min-w-0 text-muted-foreground" aria-live="polite"></p>
+        <div id="scope-actions" class="flex items-center gap-1"></div>
+        <input type="file" id="scope-file" accept=".xlsx" class="hidden" aria-label="Archivo del Diccionario de la EDT">
+    </div>
+
+    <div id="scope-result" class="mb-3 p-3 bg-card border border-border rounded-xl text-sm" role="status" hidden></div>
+
+    <div class="flex-1 min-h-0 overflow-auto bg-card border border-border rounded-xl">
+        <table class="min-w-full text-sm">
+            <thead class="sticky top-0 z-10 bg-card">
+                <tr class="border-b border-border text-xs font-medium text-muted-foreground">
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Código</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Elemento</th>
+                    <th scope="col" class="px-3 py-2.5 text-center font-medium" title="Paquete de Trabajo: el último nivel de la EDT">Paquete</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Comienzo</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Fin</th>
+                    <th scope="col" class="px-3 py-2.5 text-end font-medium">Avance</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Estado</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Responsable</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium">Criterio de aceptación</th>
+                </tr>
+            </thead>
+            <tbody id="scope-rows"></tbody>
+        </table>
+    </div>
+</section>

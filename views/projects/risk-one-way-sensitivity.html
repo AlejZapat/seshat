@@ -1,0 +1,49 @@
+<!--
+    Vista Sensibilidad de una variable de un proyecto (vista
+    `risk-one-way-sensitivity`, área Riesgos › Análisis del menú del
+    proyecto): el tornado y la araña del cronograma, sin Monte Carlo. Exige
+    `pid` en la URL. Fragmento inyectado en #content-area por ViewLoader —
+    sin <html>, <head> ni <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/risk-one-way-sensitivity.js (la corrida, en
+    framework/modules/schedule/simulation.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<p id="risk-one-way-empty" class="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground" hidden></p>
+
+<section id="risk-one-way-view" aria-labelledby="risk-one-way-heading" hidden>
+    <h2 id="risk-one-way-heading" class="sr-only">Sensibilidad de una variable</h2>
+
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <p id="risk-one-way-note" class="max-w-4xl text-sm text-muted-foreground"></p>
+        <form id="risk-one-way-form" class="flex flex-wrap items-end gap-3" autocomplete="off"></form>
+    </div>
+
+    <div id="risk-one-way-progress" class="mb-4 rounded-xl border border-border bg-card p-4" aria-live="polite" hidden></div>
+
+    <div id="risk-one-way-results" class="flex flex-col gap-4" hidden>
+        <p id="risk-one-way-results-note" class="text-sm text-muted-foreground"></p>
+        <div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
+            <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-one-way-tornado-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="risk-one-way-tornado-heading" class="font-semibold">Tornado</h3>
+                    <p id="risk-one-way-tornado-note" class="mt-1 text-sm text-muted-foreground"></p>
+                </header>
+                <div id="risk-one-way-tornado-chart" class="p-2"></div>
+            </section>
+            <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-one-way-spider-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="risk-one-way-spider-heading" class="font-semibold">Araña</h3>
+                    <p id="risk-one-way-spider-note" class="mt-1 text-sm text-muted-foreground"></p>
+                </header>
+                <div id="risk-one-way-spider-chart" class="p-2"></div>
+            </section>
+        </div>
+        <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-one-way-table-heading">
+            <h3 id="risk-one-way-table-heading" class="border-b border-border p-4 font-semibold">Efecto de cada variación sobre el plan</h3>
+            <div id="risk-one-way-table" class="overflow-x-auto"></div>
+        </section>
+    </div>
+</section>

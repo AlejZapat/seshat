@@ -1,0 +1,48 @@
+<!--
+    Vista Sensibilidad de varias variables de un proyecto (vista
+    `risk-global-sensitivity`, área Riesgos › Análisis del menú del proyecto):
+    la correlación de rangos y la priorización de 57R-09 de un análisis
+    guardado de la Simulación de Monte Carlo. Exige `pid` en la URL. Fragmento
+    inyectado en #content-area por ViewLoader — sin <html>, <head> ni <body>,
+    y sin <script>: la lógica vive en
+    src/views-init/projects/risk-global-sensitivity.js (la priorización, en
+    framework/modules/schedule/simulation.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<p id="risk-global-empty" class="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground" hidden></p>
+
+<section id="risk-global-view" aria-labelledby="risk-global-heading" hidden>
+    <h2 id="risk-global-heading" class="sr-only">Sensibilidad de varias variables</h2>
+
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <p id="risk-global-note" class="max-w-4xl text-sm text-muted-foreground"></p>
+        <form id="risk-global-form" class="flex flex-wrap items-end gap-3" autocomplete="off"></form>
+    </div>
+
+    <p id="risk-global-problem" class="mb-4 rounded-xl border border-border bg-card p-4 text-sm" role="alert" hidden></p>
+
+    <div class="flex flex-col gap-4">
+        <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-global-correlation-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="risk-global-correlation-heading" class="font-semibold">Correlación de rangos</h3>
+                <p id="risk-global-correlation-note" class="mt-1 text-sm text-muted-foreground"></p>
+            </header>
+            <div id="risk-global-correlation-chart" class="p-2"></div>
+            <div id="risk-global-correlation-table" class="overflow-x-auto border-t border-border"></div>
+        </section>
+
+        <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-global-priority-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="risk-global-priority-heading" class="font-semibold">Priorización de los Riesgos (AACE 57R-09)</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Se simula sin cada Riesgo, uno a uno, con los mismos números aleatorios; el que más baja el P80 es el primero, y se repite con los que quedan. Dice cuánto se gana si cada uno se trata del todo, en el orden en que conviene tratarlos (57R-09, figura 16).</p>
+            </header>
+            <form id="risk-global-priority-form" class="flex flex-wrap items-end gap-3 p-4" autocomplete="off"></form>
+            <div id="risk-global-priority-progress" class="px-4 pb-4" aria-live="polite" hidden></div>
+            <div id="risk-global-priority-chart" class="p-2" hidden></div>
+            <div id="risk-global-priority-table" class="overflow-x-auto border-t border-border" hidden></div>
+        </section>
+    </div>
+</section>

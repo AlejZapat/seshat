@@ -1,0 +1,43 @@
+<!--
+    Vista Matriz de Riesgos de un proyecto (vista `risk-matrix`, área Riesgos
+    del menú del proyecto): la hoja Matrices del Registro de Riesgos
+    (CA-P-014/F-002). La matriz de probabilidad por puntaje de una dimensión y
+    los Top de Severidad financiera, de plazo y de los Riesgos Catastróficos, y
+    las escalas de valoración con los valores del proyecto. Exige
+    `pid` en la URL. Fragmento inyectado en #content-area por ViewLoader — sin
+    <html>, <head> ni <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/risk-matrix.js (las reglas, en
+    src/utilities/risk-register.js; la matriz, en
+    framework/utilities/matrix.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="bg-card border border-border rounded-xl" hidden></div>
+
+<section id="risk-matrix-view" aria-labelledby="risk-matrix-heading" hidden>
+    <h2 id="risk-matrix-heading" class="sr-only">Matriz de Riesgos</h2>
+
+    <div class="flex flex-wrap items-end justify-between gap-3 mb-4">
+        <p id="risk-matrix-note" class="text-sm text-muted-foreground" aria-live="polite"></p>
+        <form id="risk-matrix-choice" class="flex flex-wrap items-end gap-3" autocomplete="off"></form>
+    </div>
+
+    <div class="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+        <section class="min-w-0 bg-card border border-border rounded-xl" aria-labelledby="risk-matrix-grid-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="risk-matrix-grid-heading" class="font-semibold"></h3>
+                <p id="risk-matrix-legend" class="mt-1 flex flex-wrap gap-2 text-xs text-muted-foreground"></p>
+            </header>
+            <div id="risk-matrix-grid" class="overflow-x-auto p-4"></div>
+        </section>
+        <div id="risk-matrix-tops" class="flex min-w-0 flex-col gap-4"></div>
+    </div>
+
+    <section class="mt-4 bg-card border border-border rounded-xl" aria-labelledby="risk-matrix-scales-heading">
+        <header class="border-b border-border p-4">
+            <h3 id="risk-matrix-scales-heading" class="font-semibold">Escalas de valoración (CA-P-014)</h3>
+            <p id="risk-matrix-scales-note" class="mt-1 text-sm text-muted-foreground"></p>
+        </header>
+        <div id="risk-matrix-scales" class="flex flex-col gap-6 p-4"></div>
+    </section>
+</section>
