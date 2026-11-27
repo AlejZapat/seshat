@@ -1,0 +1,77 @@
+<!--
+    Vista Instalaciones de un proyecto (vista `facilities`, área Alcance del
+    menú del proyecto): las instalaciones de cada obra, con sus datos y el
+    avance y el término de su construcción en la EDT de la revisión vigente;
+    se editan en el panel lateral.
+    Exige `pid` en la URL. Fragmento inyectado en #content-area por
+    ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica vive
+    en src/views-init/projects/facilities.js (el modelo, en
+    src/utilities/project-works.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<section id="facilities-view" aria-labelledby="facilities-heading" class="flex flex-col gap-3" hidden>
+    <h2 id="facilities-heading" class="sr-only">Instalaciones</h2>
+
+    <!-- Franja del registro: qué se muestra y agregar una instalación (ícono con su nombre en el title) -->
+    <div class="flex flex-wrap items-center gap-3 text-sm">
+        <p id="facilities-note" class="flex-1 basis-0 min-w-0 text-muted-foreground-1" aria-live="polite"></p>
+        <div id="facilities-actions" class="flex items-center gap-1"></div>
+    </div>
+
+    <div id="facilities-table" class="overflow-auto card" hidden>
+        <table class="min-w-full text-sm">
+            <caption class="sr-only">Instalaciones del proyecto, por obra</caption>
+            <thead>
+                <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Instalación</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Datos</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Entregable de construcción de la instalación en la EDT">EDT</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Avance de su construcción en el cronograma vigente, a su último corte">Avance</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Término de su construcción en el cronograma vigente, a su último corte">Término</th>
+                </tr>
+            </thead>
+            <tbody id="facilities-rows"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal Preline — Confirmar la eliminación de una instalación -->
+<div id="facilities-delete-modal"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="facilities-delete-label">
+    <div class="dialog-sm">
+        <div class="dialog">
+
+            <div class="dialog-header">
+                <h2 id="facilities-delete-label" class="dialog-title">Eliminar instalación</h2>
+                <button type="button"
+                        class="btn btn-ghost btn-icon text-muted-foreground-1 hover:text-foreground"
+                        aria-label="Cerrar" title="Cerrar" data-hs-overlay="#facilities-delete-modal">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+
+            <div class="dialog-body text-sm">
+                <p>¿Eliminar la instalación <span id="facilities-delete-name" class="font-semibold"></span>?</p>
+                <p class="mt-2">Esta acción no se puede deshacer.</p>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button"
+                        class="whitespace-nowrap btn btn-outline"
+                        data-hs-overlay="#facilities-delete-modal">
+                    Cancelar
+                </button>
+                <button type="button" id="facilities-delete-confirm"
+                        class="whitespace-nowrap btn btn-danger">
+                    Eliminar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

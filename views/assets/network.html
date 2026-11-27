@@ -1,0 +1,70 @@
+<!--
+    Vista Red del módulo Activos (vista `network`), en tres bloques a todo el
+    ancho: las líneas, con su norma de diseño y sus zonas climáticas; el mapa
+    con las líneas y subestaciones; y, al elegir una línea, sus estructuras
+    con su progresiva y su vano adelante, calculados desde las coordenadas.
+    Encima de todo, la barra de niveles de su iniciativa, Amenaza
+    meteorológica (`WEATHER_THREAT_MENU`).
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head>
+    ni <body>, y sin <script>: la lógica vive en
+    src/views-init/assets/network.js (los datos, en
+    src/utilities/network-repository.js; el cálculo, en
+    src/utilities/network-geometry.js).
+-->
+<nav id="initiative-menu" aria-label="Vistas de la iniciativa por nivel" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line"></nav>
+
+<div id="network-error" class="alert alert-danger" role="alert" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">error</span>
+    <div id="network-error-text"></div>
+</div>
+
+<section id="network-view" aria-labelledby="network-heading" class="flex flex-col gap-4" hidden>
+    <h2 id="network-heading" class="sr-only">Red</h2>
+
+    <!-- Líneas de la red: elegir una la destaca en el mapa y lista sus estructuras -->
+    <div class="overflow-auto card max-h-112">
+        <table class="min-w-full text-sm">
+            <caption class="sr-only">Líneas de la red</caption>
+            <thead class="sticky top-0 z-10 bg-card">
+                <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium min-w-44">Línea</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Tensión (kV)</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Circuitos</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Norma con que se diseñó la línea">Norma de diseño</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Zonas climáticas de la norma asignadas a sus estructuras">Zonas climáticas</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Suma de los vanos, calculada desde las coordenadas">Largo (km)</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Sin contar los marcos de línea">Estructuras</th>
+                </tr>
+            </thead>
+            <tbody id="network-lines"></tbody>
+        </table>
+    </div>
+
+    <!-- Mapa: trazado de las líneas, subestaciones y, de la línea elegida, sus estructuras -->
+    <div class="card overflow-hidden h-96 lg:h-112">
+        <div id="network-map" class="size-full" role="region" aria-label="Mapa de la red"></div>
+    </div>
+
+    <!-- Estructuras de la línea elegida -->
+    <div class="flex flex-col gap-2">
+        <p id="network-structures-note" class="text-sm text-muted-foreground-1" aria-live="polite"></p>
+        <div id="network-structures-table" class="overflow-auto card max-h-112" hidden>
+            <table class="min-w-full text-sm">
+                <caption class="sr-only">Estructuras de la línea elegida</caption>
+                <thead class="sticky top-0 z-10 bg-card">
+                    <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Estructura</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Clase</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Tipo de diseño de la estructura">Tipo</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Altura total de la estructura">Altura (m)</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Cota del terreno">Cota (m s. n. m.)</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Zona climática de diseño">Zona climática</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Distancia acumulada desde el inicio de la línea, calculada desde las coordenadas">Progresiva (km)</th>
+                        <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Distancia a la estructura siguiente, calculada desde las coordenadas">Vano adelante (m)</th>
+                    </tr>
+                </thead>
+                <tbody id="network-structures"></tbody>
+            </table>
+        </div>
+    </div>
+</section>

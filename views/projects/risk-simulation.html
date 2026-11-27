@@ -1,0 +1,85 @@
+<!--
+    Vista Simulación de Monte Carlo de un proyecto (vista `risk-simulation`,
+    área Riesgos › Análisis del menú del proyecto): la simulación integrada de
+    costo y plazo sobre el cronograma (CA-P-007 y CA-P-013; AACE 57R-09), con
+    los Riesgos significativos del Registro, sus resultados y los análisis
+    guardados. Exige `pid` en la URL. Fragmento inyectado en #content-area por
+    ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica vive
+    en src/views-init/projects/risk-simulation.js (las reglas, en
+    src/utilities/risk-analysis.js; la simulación, en
+    framework/modules/schedule/simulation.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<p id="risk-simulation-empty" class="card p-4 text-sm text-muted-foreground-1" hidden></p>
+
+<section id="risk-simulation-view" aria-labelledby="risk-simulation-heading" hidden>
+    <h2 id="risk-simulation-heading" class="sr-only">Simulación de Monte Carlo</h2>
+
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <p id="risk-simulation-note" class="max-w-4xl text-sm text-muted-foreground-1" aria-live="polite"></p>
+        <form id="risk-simulation-saved" class="flex flex-wrap items-end gap-3" autocomplete="off"></form>
+    </div>
+
+    <section class="mb-4 card" aria-labelledby="risk-simulation-setup-heading">
+        <header class="border-b border-border p-4">
+            <h3 id="risk-simulation-setup-heading" class="font-semibold">Simulación</h3>
+            <p id="risk-simulation-setup-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+        </header>
+        <form id="risk-simulation-form" class="flex flex-wrap items-end gap-3 p-4" autocomplete="off"></form>
+        <div id="risk-simulation-progress" class="px-4 pb-4" aria-live="polite" hidden></div>
+        <div id="risk-simulation-warnings" class="border-t border-border p-4 text-sm" hidden></div>
+    </section>
+
+    <section class="mb-4 card" aria-labelledby="risk-simulation-inputs-heading">
+        <header class="border-b border-border p-4">
+            <h3 id="risk-simulation-inputs-heading" class="font-semibold">Riesgos de la simulación</h3>
+            <p id="risk-simulation-inputs-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+        </header>
+        <div id="risk-simulation-inputs" class="overflow-x-auto"></div>
+        <details class="border-t border-border p-4 text-sm">
+            <summary id="risk-simulation-excluded-summary" class="cursor-pointer font-medium"></summary>
+            <div id="risk-simulation-excluded" class="mt-3 overflow-x-auto"></div>
+        </details>
+    </section>
+
+    <div id="risk-simulation-results" class="flex flex-col gap-4" hidden>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <p id="risk-simulation-results-note" class="text-sm text-muted-foreground-1"></p>
+            <div id="risk-simulation-results-actions" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div id="risk-simulation-stats" class="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4"></div>
+
+        <div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
+            <section class="min-w-0 card" aria-labelledby="risk-simulation-term-heading">
+                <h3 id="risk-simulation-term-heading" class="border-b border-border p-4 font-semibold"></h3>
+                <div id="risk-simulation-term-chart" class="p-2"></div>
+                <div id="risk-simulation-term-table" class="overflow-x-auto border-t border-border"></div>
+            </section>
+            <section class="min-w-0 card" aria-labelledby="risk-simulation-cost-heading">
+                <h3 id="risk-simulation-cost-heading" class="border-b border-border p-4 font-semibold">Costo: distribución</h3>
+                <div id="risk-simulation-cost-chart" class="p-2"></div>
+                <div id="risk-simulation-cost-table" class="overflow-x-auto border-t border-border"></div>
+            </section>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
+            <section class="min-w-0 card" aria-labelledby="risk-simulation-scatter-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="risk-simulation-scatter-heading" class="font-semibold">Costo y plazo juntos</h3>
+                    <p id="risk-simulation-scatter-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+                </header>
+                <div id="risk-simulation-scatter" class="p-2"></div>
+            </section>
+            <section class="min-w-0 card" aria-labelledby="risk-simulation-critical-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="risk-simulation-critical-heading" class="font-semibold">Índice de criticidad</h3>
+                    <p class="mt-1 text-sm text-muted-foreground-1">Porcentaje de las iteraciones en que cada tarea estuvo en el camino que determina el término, sin las fechas límite (57R-09): muestra las rutas cercanas al Camino Crítico (CA-P-007).</p>
+                </header>
+                <div id="risk-simulation-critical" class="overflow-x-auto"></div>
+            </section>
+        </div>
+    </div>
+</section>

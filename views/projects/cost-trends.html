@@ -1,0 +1,43 @@
+<!--
+    Vista Tendencias y Contingencia de un proyecto (vista `cost-trends`, área
+    Costos del menú del proyecto): el Registro de Tendencias y Contingencia
+    (CA-P-013/F-004). Las Tendencias, con su monto ponderado, y los movimientos
+    de la Contingencia y de la Reserva de Gestión, con el saldo de cada fondo.
+    Exige `pid` en la URL. Fragmento inyectado en #content-area por ViewLoader
+    — sin <html>, <head> ni <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/cost-trends.js (las reglas, en
+    src/utilities/trend-register.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<section id="cost-trends-view" aria-labelledby="cost-trends-heading" hidden>
+    <h2 id="cost-trends-heading" class="sr-only">Tendencias y Contingencia</h2>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <p id="cost-trends-note" class="text-sm text-muted-foreground-1" aria-live="polite"></p>
+        <div id="cost-trends-actions" class="flex items-center gap-1"></div>
+    </div>
+
+    <div id="cost-trends-stats" class="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4 mb-4"></div>
+
+    <section class="min-w-0 card mb-4" aria-labelledby="cost-trends-list-heading">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+            <h3 id="cost-trends-list-heading" class="font-semibold">Tendencias</h3>
+            <div id="cost-trends-list-actions" class="flex items-center gap-2"></div>
+        </header>
+        <form id="cost-trends-form" class="border-b border-border p-4 text-sm" novalidate autocomplete="off" hidden></form>
+        <div id="cost-trends-list" class="overflow-x-auto"></div>
+    </section>
+
+    <section class="min-w-0 card" aria-labelledby="cost-trends-movements-heading">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+            <h3 id="cost-trends-movements-heading" class="font-semibold">Movimientos de la Contingencia y de la Reserva de Gestión</h3>
+            <div id="cost-trends-movements-actions" class="flex items-center gap-2"></div>
+        </header>
+        <form id="cost-trends-movement-form" class="border-b border-border p-4 text-sm" novalidate autocomplete="off" hidden></form>
+        <div id="cost-trends-movements" class="overflow-x-auto"></div>
+    </section>
+</section>

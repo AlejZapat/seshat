@@ -1,0 +1,28 @@
+<!--
+    Vista Estudio de la iniciativa Amenaza meteorológica del módulo Activos (vista `weather-study`): su estudio
+    técnico, el respaldo metodológico de la iniciativa (decisions/assets.md, "Estudio de cada iniciativa"). Dibuja
+    el informe en Markdown de `src/data/assets/weather-threat/` con el visor común de los estudios
+    (`src/utilities/study-view.js`), con su índice al lado. El informe está fuera de git: sin él, la vista lo dice.
+    Encima de todo, la barra de niveles de su iniciativa (`WEATHER_THREAT_MENU`).
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica
+    vive en src/views-init/assets/weather-study.js.
+-->
+<nav id="initiative-menu" aria-label="Vistas de la iniciativa por nivel" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line"></nav>
+
+<div id="study-empty" class="panel border-dashed p-8 text-center" hidden>
+    <span class="material-symbols-outlined text-muted-foreground-2" aria-hidden="true">menu_book</span>
+    <p class="mt-2 text-sm font-medium text-foreground">Esta copia de la app no tiene el estudio</p>
+    <p class="mt-1 text-sm text-muted-foreground-2">El informe es confidencial y no viaja con el código: va en <code class="font-mono">src/data/assets/weather-threat/technical-report.md</code>.</p>
+</div>
+
+<section id="study-view" aria-labelledby="study-heading" class="grid gap-6 xl:grid-cols-[15rem_minmax(0,1fr)]" hidden>
+    <h2 id="study-heading" class="sr-only">Estudio técnico</h2>
+
+    <!-- Índice: las secciones de primer y segundo nivel. Al lado del informe desde 1280 px; antes, arriba y con su propio desplazamiento -->
+    <nav id="study-outline" aria-label="Índice del estudio" class="card max-h-64 overflow-y-auto p-3 text-sm xl:sticky xl:top-12 xl:self-start xl:max-h-[calc(100vh-11rem)]"></nav>
+
+    <article class="doc card min-w-0 p-6">
+        <header id="study-head"></header>
+        <div id="study-body"></div>
+    </article>
+</section>

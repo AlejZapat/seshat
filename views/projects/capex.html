@@ -1,0 +1,70 @@
+<!--
+    Vista Distribución del CAPEX de un proyecto (vista `capex`, área Costos del
+    menú del proyecto): el CAPEX asignado a cada Cuenta de Control y su costo
+    planeado, desde la línea base de una revisión del cronograma, con la
+    Contingencia y la Reserva de Gestión del Registro de Tendencias y
+    Contingencia (CA-P-013/F-002).
+    Exige `pid` en la URL. Fragmento inyectado en #content-area por
+    ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica vive
+    en src/views-init/projects/capex.js (las reglas, en
+    src/utilities/capex-distribution.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<div id="capex-empty" class="card p-4 text-sm" hidden></div>
+
+<section id="capex-view" aria-labelledby="capex-heading" hidden>
+    <h2 id="capex-heading" class="sr-only">Distribución del CAPEX</h2>
+
+    <div class="flex flex-wrap items-end gap-4 mb-3 text-sm">
+        <div>
+            <label for="capex-revision" class="field-label">Revisión</label>
+            <select id="capex-revision"
+                    class="field w-auto pe-9"></select>
+        </div>
+    </div>
+
+    <p id="capex-note" class="mb-4 text-sm text-muted-foreground-1" aria-live="polite"></p>
+
+    <div id="capex-stats" class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4"></div>
+
+    <ul id="capex-warnings" class="mb-4 space-y-1 rounded-card border border-warning-line bg-warning-soft p-4 text-sm text-warning-text" hidden></ul>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <section class="lg:col-span-2 min-w-0 card" aria-labelledby="capex-accounts-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="capex-accounts-heading" class="font-semibold">CAPEX por Cuenta de Control</h3>
+            </header>
+            <div id="capex-accounts"></div>
+        </section>
+
+        <section class="card" aria-labelledby="capex-reserves-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="capex-reserves-heading" class="font-semibold">Contingencia y Reserva de Gestión</h3>
+            </header>
+            <div id="capex-funds" class="p-4 text-sm"></div>
+        </section>
+    </div>
+
+    <section class="card" aria-labelledby="capex-curve-heading">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+            <h3 id="capex-curve-heading" class="font-semibold">Costo planeado</h3>
+            <div class="flex items-center gap-x-2 text-sm">
+                <label for="capex-account" class="font-medium">Cuenta de Control</label>
+                <select id="capex-account"
+                        class="field w-auto pe-9"></select>
+            </div>
+        </header>
+        <div class="p-4 text-sm">
+            <p id="capex-curve-note" class="mb-2 text-muted-foreground-1"></p>
+            <div id="capex-curve"></div>
+            <details class="mt-4">
+                <summary class="cursor-pointer font-medium focus:outline-hidden focus:underline">Costo planeado por período</summary>
+                <div id="capex-periods" class="mt-2"></div>
+            </details>
+        </div>
+    </section>
+</section>

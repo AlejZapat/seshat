@@ -1,0 +1,121 @@
+<!--
+    Vista Obras de un proyecto (vista `works`, área Alcance del menú del
+    proyecto): las obras del decreto, con su plazo, sus montos y la fecha
+    límite y el término de sus hitos en la EDT de la revisión vigente, con la
+    multa de sus Bases; se cargan desde el Asistente y se editan en el panel
+    lateral.
+    Exige `pid` en la URL. Fragmento inyectado en #content-area por
+    ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica vive
+    en src/views-init/projects/works.js (el modelo, en
+    src/utilities/project-works.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<section id="works-view" aria-labelledby="works-heading" class="flex flex-col gap-3" hidden>
+    <h2 id="works-heading" class="sr-only">Obras</h2>
+
+    <!-- Franja del registro: qué se muestra, agregar una obra y cargar desde el Asistente (íconos con su nombre en el title) -->
+    <div class="flex flex-wrap items-center gap-3 text-sm">
+        <p id="works-note" class="flex-1 basis-0 min-w-0 text-muted-foreground-1" aria-live="polite"></p>
+        <div id="works-actions" class="flex items-center gap-1"></div>
+        <input type="file" id="works-file" accept=".json,application/json" class="hidden" aria-label="Archivo del Asistente">
+    </div>
+
+    <div id="works-result" class="p-3 card text-sm" role="status" hidden></div>
+
+    <div id="works-table" class="overflow-auto card" hidden>
+        <table class="min-w-full text-sm">
+            <caption class="sr-only">Obras del proyecto</caption>
+            <thead>
+                <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium min-w-56">Obra</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Plazo constructivo del decreto y fecha límite de sus hitos en el cronograma vigente (campo Fecha límite, SH-I-001)">Plazo</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Término de los hitos de la obra en el cronograma vigente, a su último corte, comparado con su fecha límite">Término</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Multa por día de atraso de sus Bases sobre su V.I. referencial y, si sus hitos terminan después de su fecha límite, la multa expuesta">Multa</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Valor de inversión referencial del decreto">V.I.</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Costo anual de operación, mantenimiento y administración referencial del decreto">COMA</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Anualidad del valor de inversión adjudicada">AVI</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="COMA adjudicado">COMA adj.</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Valor anual de la transmisión por tramo: AVI más COMA adjudicados">VATT</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Elemento de la EDT con los hitos de la obra">EDT</th>
+                </tr>
+            </thead>
+            <tbody id="works-rows"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal Preline — Cargar las obras desde el archivo del Asistente -->
+<div id="works-load-modal"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="works-load-label">
+    <div class="dialog-md">
+        <div class="dialog">
+
+            <div class="dialog-header">
+                <h2 id="works-load-label" class="dialog-title">Cargar desde el Asistente</h2>
+                <button type="button"
+                        class="btn btn-ghost btn-icon text-muted-foreground-1 hover:text-foreground"
+                        aria-label="Cerrar" title="Cerrar" data-hs-overlay="#works-load-modal">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+
+            <div id="works-load-detail" class="dialog-body text-sm space-y-2"></div>
+
+            <div class="dialog-footer">
+                <button type="button"
+                        class="whitespace-nowrap btn btn-outline"
+                        data-hs-overlay="#works-load-modal">
+                    Cancelar
+                </button>
+                <button type="button" id="works-load-confirm"
+                        class="whitespace-nowrap btn btn-primary">
+                    Cargar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Preline — Confirmar la eliminación de una obra y sus instalaciones -->
+<div id="works-delete-modal"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="works-delete-label">
+    <div class="dialog-sm">
+        <div class="dialog">
+
+            <div class="dialog-header">
+                <h2 id="works-delete-label" class="dialog-title">Eliminar obra</h2>
+                <button type="button"
+                        class="btn btn-ghost btn-icon text-muted-foreground-1 hover:text-foreground"
+                        aria-label="Cerrar" title="Cerrar" data-hs-overlay="#works-delete-modal">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+
+            <div class="dialog-body text-sm">
+                <p>¿Eliminar la obra <span id="works-delete-name" class="font-semibold"></span>?</p>
+                <p id="works-delete-detail" class="mt-2"></p>
+                <p class="mt-2">Esta acción no se puede deshacer.</p>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button"
+                        class="whitespace-nowrap btn btn-outline"
+                        data-hs-overlay="#works-delete-modal">
+                    Cancelar
+                </button>
+                <button type="button" id="works-delete-confirm"
+                        class="whitespace-nowrap btn btn-danger">
+                    Eliminar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

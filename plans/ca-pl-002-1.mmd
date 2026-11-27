@@ -1,0 +1,10 @@
+flowchart LR
+    F1["Estructurar<br/>la oferta"] --> C1{{"Oferta"}}
+    C1 --> F2["Planeación<br/>detallada"] --> C2{{"Autorización"}}
+    C2 --> F3["Diseño y<br/>viabilización"] --> C3{{"Inicio de<br/>construcción"}}
+    C3 --> F4["Construcción,<br/>montaje y pruebas"] --> C4{{"Energización"}}
+    C4 --> F5["Entrega<br/>y cierre"] --> C5{{"Cierre"}}
+    classDef phase fill:#ffffff,stroke:#333333,color:#000000
+    classDef gate fill:#d9d9d9,stroke:#333333,color:#000000
+    class F1,F2,F3,F4,F5 phase
+    class C1,C2,C3,C4,C5 gate

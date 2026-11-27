@@ -1,0 +1,111 @@
+<!--
+    Vista Eventos del módulo Activos (vista `events`), en tres bloques a todo
+    el ancho: la tabla de eventos sobre la red, el mapa con un marcador por
+    falla y el detalle del evento elegido, con sus fallas y sus daños. "Ver
+    condiciones" pide al archivo del IFS las condiciones de cada falla y dice
+    si el modelo de amenaza avisaba (decisions/assets.md, "Eventos"). Encima de todo, la barra de niveles
+    de su iniciativa, Amenaza meteorológica (`WEATHER_THREAT_MENU`).
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head>
+    ni <body>, y sin <script>: la lógica vive en
+    src/views-init/assets/events.js (los datos, en
+    src/utilities/network-repository.js; las condiciones, en
+    src/utilities/threat-forecast.js).
+-->
+<nav id="initiative-menu" aria-label="Vistas de la iniciativa por nivel" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line"></nav>
+
+<div id="events-error" class="alert alert-danger" role="alert" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">error</span>
+    <div id="events-error-text"></div>
+</div>
+
+<section id="events-view" aria-labelledby="events-heading" class="flex flex-col gap-4" hidden>
+    <h2 id="events-heading" class="sr-only">Eventos</h2>
+
+    <!-- Eventos: elegir uno muestra su detalle y centra el mapa en sus fallas -->
+    <div class="overflow-auto card max-h-112">
+        <table class="min-w-full text-sm">
+            <caption class="sr-only">Eventos sobre la red</caption>
+            <thead class="sticky top-0 z-10 bg-card">
+                <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Evento</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Fecha</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Con fallas, falla; solo con daños, avería">Tipo</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Línea</th>
+                    <th scope="col" class="px-3 py-2.5 text-start font-medium min-w-64">Fenómeno</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Fallas</th>
+                    <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Daños</th>
+                </tr>
+            </thead>
+            <tbody id="events-list"></tbody>
+        </table>
+    </div>
+
+    <!-- Mapa: las líneas con eventos y un marcador por falla con lugar conocido -->
+    <div class="card overflow-hidden h-96 lg:h-112">
+        <div id="events-map" class="size-full" role="region" aria-label="Mapa de las fallas"></div>
+    </div>
+
+    <!-- Detalle del evento elegido -->
+    <div class="flex flex-col gap-3">
+        <p id="events-detail-note" class="text-sm text-muted-foreground-1" aria-live="polite"></p>
+        <div id="events-detail" class="flex flex-col gap-3" hidden>
+            <dl id="events-summary" class="card p-4 grid grid-cols-1 md:grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm"></dl>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <h3 class="text-sm font-medium">Fallas</h3>
+                <button id="events-conditions" type="button" class="btn btn-outline"
+                        title="Condiciones meteorológicas y estado del modelo de amenaza a la hora de cada falla, desde el archivo de pronósticos del ECMWF IFS">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud</span>
+                    Ver condiciones
+                </button>
+                <a id="events-watch" class="btn btn-outline" hidden
+                   title="Abre Vigilancia en el modo Histórico, con el tramo de las fallas y tres días desde el día anterior a la primera">
+                    <span class="material-symbols-outlined" aria-hidden="true">radar</span>
+                    Ver en Vigilancia
+                </a>
+            </div>
+            <div class="overflow-auto card">
+                <table class="min-w-full text-sm">
+                    <caption class="sr-only">Fallas del evento elegido</caption>
+                    <thead class="bg-card">
+                        <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">N.º</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Hora local">Hora</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Circuito</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Fases</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Tipo</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Lugar</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Estado del modelo de amenaza en la hora de la falla">Estado</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Peor estado del modelo en las 72 horas antes de la falla">Peor previo (72 h)</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Masa de nieve húmeda sobre el conductor en la hora de la falla: el de la línea si se conoce; si no, uno de 30 mm">Manguito (kg/m)</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Tensión del cable en la hora de la falla, sobre su rotura. El límite de diseño es 50 %, y con hielo, 70 % (RPTD N.° 11, 5.10.2 y 5.10.3). Sin datos del cable, no se calcula">Cable (% de la rotura)</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Temperatura a 2 m en la hora de la falla">Temperatura (°C)</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Precipitación de la hora de la falla">Precipitación (mm)</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Viento de la torre a la altura del conductor en la hora de la falla, trasladado desde el pronóstico con su tabla del Explorador Eólico">Viento (m/s)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-faults"></tbody>
+                </table>
+            </div>
+            <p id="events-conditions-note" class="text-xs text-muted-foreground-1" aria-live="polite" hidden></p>
+
+            <h3 class="text-sm font-medium">Daños</h3>
+            <div class="overflow-auto card">
+                <table class="min-w-full text-sm">
+                    <caption class="sr-only">Daños del evento elegido</caption>
+                    <thead class="bg-card">
+                        <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">N.º</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Componente</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Lugar</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Circuito</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Fase</th>
+                            <th scope="col" class="px-3 py-2.5 text-start font-medium min-w-64">Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-damages"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

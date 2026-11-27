@@ -1,0 +1,137 @@
+<!--
+    Vista Vigilancia del módulo Activos (vista `watch`): el pronóstico vigente de una línea o un tramo contra el
+    diseño de sus estructuras (decisions/assets.md, "Vigilancia de amenazas"; plan en
+    working-papers/assets/THREAT-WATCH-PLAN.md). Arriba se elige qué vigilar y se ve cuántas llamadas a
+    Open-Meteo cuesta; abajo, el contexto del resultado (modo, fuente, corrida, consulta, período y tramo), su
+    resumen frente al diseño, los episodios (dónde y cuándo se llega a Propicia o Sobre diseño) y el diagrama
+    tiempo-espacio. Encima de todo, la barra de niveles de su iniciativa, Amenaza meteorológica
+    (`WEATHER_THREAT_MENU`).
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica
+    vive en src/views-init/assets/watch.js (la consulta y el resumen, en src/utilities/threat-watch.js; lo
+    guardado, en src/utilities/forecast-cache.js).
+-->
+<nav id="initiative-menu" aria-label="Vistas de la iniciativa por nivel" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line"></nav>
+
+<div id="watch-error" class="alert alert-danger" role="alert" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">error</span>
+    <div id="watch-error-text"></div>
+</div>
+
+<section id="watch-view" aria-labelledby="watch-heading" class="flex flex-col gap-4" hidden>
+    <h2 id="watch-heading" class="sr-only">Vigilancia</h2>
+
+    <!-- Qué se vigila: el pronóstico vigente o un período pasado (Histórico), la línea, el tramo y el horizonte. El botón consulta solo lo que falta -->
+    <form id="watch-form" class="card p-4 flex flex-col gap-3" novalidate>
+        <div class="flex flex-wrap items-end gap-4 text-sm">
+            <div>
+                <label for="watch-mode" class="field-label">Modo</label>
+                <select id="watch-mode"
+                        class="field w-auto pe-9">
+                    <option value="forecast">Pronóstico</option>
+                    <option value="history">Histórico</option>
+                </select>
+            </div>
+            <div id="watch-date-field" hidden>
+                <label for="watch-date" class="field-label">Desde el día</label>
+                <input id="watch-date" type="date" min="2017-01-01"
+                       class="field w-auto">
+            </div>
+            <div>
+                <label for="watch-line" class="field-label">Línea</label>
+                <select id="watch-line"
+                        class="field w-auto pe-9"></select>
+            </div>
+            <div>
+                <label for="watch-from" class="field-label">Desde la estructura</label>
+                <select id="watch-from"
+                        class="field w-auto pe-9"></select>
+            </div>
+            <div>
+                <label for="watch-to" class="field-label">Hasta la estructura</label>
+                <select id="watch-to"
+                        class="field w-auto pe-9"></select>
+            </div>
+            <div>
+                <label id="watch-horizon-label" for="watch-horizon" class="field-label">Horizonte</label>
+                <select id="watch-horizon"
+                        class="field w-auto pe-9"></select>
+            </div>
+            <div class="flex items-center">
+                <button id="watch-query" type="submit" class="btn btn-primary">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud_download</span>
+                    Consultar
+                </button>
+            </div>
+        </div>
+        <p id="watch-cost" class="text-sm text-muted-foreground-1" aria-live="polite"></p>
+    </form>
+
+    <!-- Resultado: contexto siempre visible, resumen frente al diseño, episodios y diagrama -->
+    <section id="watch-result" class="flex flex-col gap-4" aria-labelledby="watch-result-heading" hidden>
+        <div class="card">
+            <header class="border-b border-border p-4">
+                <h3 id="watch-result-heading" class="font-semibold">Pronóstico contra el diseño</h3>
+            </header>
+            <dl id="watch-context" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-3 p-4 text-sm"></dl>
+        </div>
+        <p id="watch-verdict" class="text-sm" aria-live="polite"></p>
+        <div id="watch-stats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+
+        <!-- Episodios: dónde y cuándo se llega a Propicia o Sobre diseño. Elegir uno lo marca en el diagrama -->
+        <div class="card">
+            <header class="border-b border-border p-4">
+                <h3 id="watch-episodes-heading" class="font-semibold">Episodios</h3>
+                <p id="watch-episodes-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+            </header>
+            <div id="watch-episodes-table" class="overflow-auto max-h-80">
+                <table class="min-w-full text-sm" aria-labelledby="watch-episodes-heading">
+                    <thead class="sticky top-0 z-10 bg-card">
+                        <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Tramo</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Mecanismo</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Estado</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Inicio</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium">Fin</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Cuánto falta para que empiece">Plazo</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Mayor carga del episodio sobre la de diseño, con su estructura y su hora">Máximo frente al diseño</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Qué cambió frente a la corrida anterior del pronóstico que consultaste: si el episodio es nuevo, se mantiene, empeora o mejora, con su estado y su máximo de antes">Frente a la corrida anterior</th>
+                        </tr>
+                    </thead>
+                    <tbody id="watch-episodes"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Diagrama tiempo-espacio: las estructuras a lo largo de la línea contra las horas -->
+        <div class="card">
+            <header class="border-b border-border p-4">
+                <h3 class="font-semibold">Diagrama tiempo-espacio</h3>
+                <p id="watch-diagram-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+            </header>
+            <div id="watch-diagram-frame" class="relative p-2">
+                <div id="watch-diagram"></div>
+                <div id="watch-diagram-mark" class="pointer-events-none absolute rounded-sm border-2 border-foreground" hidden></div>
+                <!-- Fallas registradas del período, en el modo Histórico: un punto en su estructura y su hora -->
+                <div id="watch-diagram-faults" class="pointer-events-none absolute inset-0"></div>
+            </div>
+            <!-- Leyenda: la arma la vista con los colores del tema (watch.js, `diagramScale()`) -->
+            <ul id="watch-diagram-legend" class="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border p-4 text-xs" aria-label="Leyenda del diagrama"></ul>
+        </div>
+        <p id="watch-legend" class="text-xs text-muted-foreground-1">
+            Normal: el viento queda bajo el 60 % de la presión de diseño y no hay nieve húmeda. Propicia: nieve húmeda
+            cayendo o acumulada (1 mm o más), o viento desde el 60 % de la presión de diseño. Donde se conocen los datos
+            del cable, los estados siguientes salen de su tensión, con el manguito, el viento y la temperatura de cada
+            hora. Sobre el límite de diseño: pasa el 50 % de su rotura, el máximo que admite la norma en general.
+            Sobre el límite con hielo: pasa el 70 %, el máximo que admite con manguito (RPTD N.° 11, 5.10.2 y 5.10.3).
+            Donde no se conocen, Sobre diseño: el manguito pasa el peso del de la hipótesis climática, o la presión del
+            viento, sola o con hielo, pasa la de esa hipótesis. Los porcentajes
+            y los colores del diagrama dicen cuánto se acerca cada carga a la hipótesis climática de la norma con que se
+            diseñó la línea (su zona de hielo y viento), sin factores de seguridad: no es la capacidad del cable ni la
+            de la torre. El viento de cada torre es una cota alta: frente a los anemómetros de seis torres coincide con
+            lo medido en tres, da entre 1,8 y 3,3 veces en las otras y no da de menos en ninguna; por eso un episodio
+            que solo se debe al viento, o al hielo con viento, lleva la marca «cota alta». El modelo no
+            predice fallas: dice si las condiciones son propicias para cargar el conductor o pasan su diseño. Evalúa el activo sano, tal
+            como salió del diseño: no considera desgaste, piezas faltantes ni defectos previos.
+        </p>
+    </section>
+</section>

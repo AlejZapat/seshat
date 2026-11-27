@@ -1,0 +1,125 @@
+<!--
+    Vista Sensores de la iniciativa Hielo y tensión del módulo Activos (vista `sensors`; decisions/assets.md,
+    "Sensores: lecturas y episodios de carga"; RPTD17-5.21). Muestra lo que miden los sensores del cable, los
+    episodios en que el cable se cargó con frío y lo que decía el modelo de amenaza en esas horas. Las lecturas se
+    cargan desde un archivo de historia y quedan en el navegador. Encima de todo, la barra de niveles de su
+    iniciativa (`ICE_TENSION_MENU`).
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni <body>, y sin <script>: la lógica
+    vive en src/views-init/assets/sensors.js (las reglas, en src/utilities/sensor-load.js; lo guardado, en
+    src/utilities/sensor-repository.js).
+-->
+<nav id="initiative-menu" aria-label="Vistas de la iniciativa por nivel" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line"></nav>
+
+<div id="sensors-error" class="alert alert-danger" role="alert" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">error</span>
+    <div id="sensors-error-text"></div>
+</div>
+
+<section id="sensors-view" aria-labelledby="sensors-heading" class="flex flex-col gap-4" hidden>
+    <h2 id="sensors-heading" class="sr-only">Sensores</h2>
+
+    <!-- Qué se mira: el sensor, el período y el día en que empieza. A la derecha, la carga del archivo de historia -->
+    <form id="sensors-form" class="card p-4 flex flex-col gap-3" novalidate>
+        <div class="flex flex-wrap items-end gap-4 text-sm">
+            <div>
+                <label for="sensors-sensor" class="field-label">Sensor</label>
+                <select id="sensors-sensor" class="field w-auto pe-9"></select>
+            </div>
+            <div>
+                <label for="sensors-span" class="field-label">Período</label>
+                <select id="sensors-span" class="field w-auto pe-9"></select>
+            </div>
+            <div>
+                <label for="sensors-date" class="field-label">Desde el día</label>
+                <input id="sensors-date" type="date" class="field w-auto">
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="sensors-previous" type="button" class="btn btn-outline btn-icon" title="Período anterior" aria-label="Período anterior">
+                    <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+                </button>
+                <button id="sensors-next" type="button" class="btn btn-outline btn-icon" title="Período siguiente" aria-label="Período siguiente">
+                    <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+                </button>
+            </div>
+            <div class="ms-auto flex items-center">
+                <button id="sensors-load" type="button" class="btn btn-outline"
+                        title="Lee un archivo de historia de los sensores y reemplaza las lecturas guardadas de cada sensor que trae">
+                    <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
+                    Cargar historia
+                </button>
+            </div>
+        </div>
+        <p id="sensors-coverage" class="text-sm text-muted-foreground-1" aria-live="polite"></p>
+        <input type="file" id="sensors-file" accept=".json,application/json" hidden aria-label="Archivo de historia de los sensores">
+    </form>
+
+    <div id="sensors-empty" class="panel border-dashed p-8 text-center" hidden>
+        <span class="material-symbols-outlined text-muted-foreground-2" aria-hidden="true">sensors</span>
+        <p class="mt-2 text-sm font-medium text-foreground">Este sensor no tiene lecturas guardadas</p>
+        <p class="mt-1 text-sm text-muted-foreground-2">Las lecturas son datos de la empresa y no viajan con el código: usa Cargar historia con el archivo exportado del sistema de monitoreo.</p>
+    </div>
+
+    <section id="sensors-result" class="flex flex-col gap-4" aria-labelledby="sensors-result-heading" hidden>
+        <h3 id="sensors-result-heading" class="sr-only">Lecturas del sensor</h3>
+        <div id="sensors-stats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+
+        <!-- Episodios de carga de toda la historia del sensor. Elegir uno lo muestra en los gráficos -->
+        <div class="card">
+            <header class="flex flex-wrap items-start justify-between gap-3 border-b border-border p-4">
+                <div class="min-w-0">
+                    <h4 id="sensors-episodes-heading" class="font-semibold">Episodios de carga</h4>
+                    <p id="sensors-episodes-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+                </div>
+                <button id="sensors-model" type="button" class="btn btn-outline" hidden
+                        title="Consulta el archivo de pronósticos del IFS y corre el modelo de amenaza en las horas de cada episodio">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud_download</span>
+                    Consultar el modelo
+                </button>
+            </header>
+            <div id="sensors-episodes-table" class="overflow-auto max-h-72" hidden>
+                <table class="min-w-full text-sm" aria-labelledby="sensors-episodes-heading">
+                    <thead class="sticky top-0 z-10 bg-card">
+                        <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Hora local de la primera lectura con carga">Inicio</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium">Duración</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Mayor aumento de la inclinación sobre su valor normal, en promedios de 5 minutos">Aumento máximo</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Menor temperatura ambiente que midió el sensor durante el episodio">Ambiente mínima</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-start font-medium" title="Peor estado del modelo de amenaza en las horas del episodio, con el archivo de pronósticos del IFS">Modelo de amenaza</th>
+                            <th scope="col" class="px-3 py-2.5 whitespace-nowrap text-end font-medium" title="Mayor masa de nieve húmeda sobre el conductor que da el modelo en las horas del episodio">Manguito del modelo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sensors-episodes"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Lecturas del período: inclinación, temperaturas y humedad, con los episodios sombreados -->
+        <div class="card">
+            <header class="flex flex-wrap items-start justify-between gap-3 border-b border-border p-4">
+                <div class="min-w-0">
+                    <h4 id="sensors-readings-heading" class="font-semibold">Lecturas</h4>
+                    <p id="sensors-readings-note" class="mt-1 text-sm text-muted-foreground-1"></p>
+                </div>
+                <button id="sensors-forecast" type="button" class="btn btn-outline"
+                        title="Agrega a los gráficos la temperatura y la humedad del archivo de pronósticos del IFS para la torre">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud_download</span>
+                    Comparar con el pronóstico
+                </button>
+            </header>
+            <div class="flex flex-col gap-2 p-2">
+                <figure>
+                    <figcaption class="px-2 pt-2 text-xs font-medium text-muted-foreground-1">Inclinación del cable (°)</figcaption>
+                    <div id="sensors-chart-inclination"></div>
+                </figure>
+                <figure>
+                    <figcaption class="px-2 pt-2 text-xs font-medium text-muted-foreground-1">Temperatura (°C)</figcaption>
+                    <div id="sensors-chart-temperature"></div>
+                </figure>
+                <figure>
+                    <figcaption class="px-2 pt-2 text-xs font-medium text-muted-foreground-1">Humedad relativa (%)</figcaption>
+                    <div id="sensors-chart-humidity"></div>
+                </figure>
+            </div>
+        </div>
+    </section>
+</section>

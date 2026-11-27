@@ -1,0 +1,371 @@
+<!--
+    Vista Asistente para crear un proyecto (vista `wizard` del módulo
+    projects): un paso por pantalla, con el Stepper de Preline (modo
+    lineal: se avanza con "Siguiente" y cada paso se valida antes de pasar al
+    que sigue). La EDT que resulta se ve en el último paso. No escribe en la base de datos.
+    Fragmento inyectado en #content-area por ViewLoader, sin <html>, <head>
+    ni <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/wizard.js.
+-->
+<section id="wizard-stepper" aria-labelledby="wizard-heading" data-hs-stepper
+         class="flex flex-col gap-4 h-[calc(100dvh-6rem)] min-h-96">
+    <h2 id="wizard-heading" class="sr-only">Asistente para crear un proyecto</h2>
+
+    <!-- Pasos -->
+    <ul class="relative flex flex-row items-center gap-x-2" aria-label="Pasos del asistente">
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 1}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">1</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Proyecto</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 2}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">2</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Obras</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 3}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">3</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Instalaciones</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 4}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">4</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Hitos</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 5}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">5</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Bienes</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 6}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">6</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Contratos</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 7}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">7</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Construcción</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+            <li class="group flex items-center gap-x-2 shrink basis-0 flex-1 last:flex-none" data-hs-stepper-nav-item='{"index": 8}'>
+                <span class="inline-flex items-center gap-x-2 text-sm">
+                    <span class="size-7 shrink-0 flex justify-center items-center rounded-full bg-layer border border-layer-line text-xs font-medium text-layer-foreground hs-stepper-active:bg-primary hs-stepper-active:border-primary hs-stepper-active:text-primary-foreground hs-stepper-success:bg-success hs-stepper-success:border-success hs-stepper-success:text-success-foreground hs-stepper-error:bg-danger hs-stepper-error:border-danger hs-stepper-error:text-danger-foreground">
+                        <span class="hs-stepper-success:hidden">8</span>
+                        <span class="material-symbols-outlined text-sm hidden hs-stepper-success:block" aria-hidden="true">check</span>
+                    </span>
+                    <span class="font-medium text-muted-foreground-1 hs-stepper-active:text-foreground hs-stepper-success:text-foreground max-xl:hidden xl:whitespace-nowrap">Revisión</span>
+                </span>
+                <span class="h-px flex-1 bg-border group-last:hidden hs-stepper-success:bg-success" aria-hidden="true"></span>
+            </li>
+    </ul>
+
+    <!-- Contenido del paso -->
+    <form id="wizard-form" autocomplete="off" novalidate class="flex-1 min-h-0 overflow-y-auto card p-6">
+
+        <div data-hs-stepper-content-item='{"index": 1}'>
+            <h3 class="font-semibold mb-1">Proyecto</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Cómo se identifica el proyecto en la aplicación.</p>
+
+            <div class="grid sm:grid-cols-4 gap-4">
+                <div>
+                    <label for="wizard-project-code" class="field-label">Código</label>
+                    <input id="wizard-project-code" data-field="project.code" data-required="Falta el código." type="text" maxlength="8" class="field uppercase"> <!-- ui-check-ignore mayusculas: el código se escribe en mayúsculas, es formato del dato -->
+                </div>
+                <div class="sm:col-span-2">
+                    <label for="wizard-project-name" class="field-label">Nombre</label>
+                    <input id="wizard-project-name" data-field="project.name" data-required="Falta el nombre." type="text" maxlength="64" class="field">
+                </div>
+                <div>
+                    <label for="wizard-project-currency" class="field-label">Moneda</label>
+                    <select id="wizard-project-currency" data-field="project.currencyId" data-required="Falta la moneda." class="field pe-9"></select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label for="wizard-project-environmental" class="field-label">Ingreso ambiental</label>
+                    <select id="wizard-project-environmental" data-field="project.environmentalEntry" data-required="Falta el ingreso ambiental." aria-describedby="wizard-project-environmental-hint" class="field pe-9"></select>
+                    <p id="wizard-project-environmental-hint" class="mt-2 text-sm text-muted-foreground-1">Vía por la que se tramita la evaluación ambiental de todas las obras del proyecto.</p>
+                </div>
+            </div>
+
+            <h3 class="font-semibold mt-8 pt-6 border-t border-border mb-1">Proceso de licitación</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Contexto del proyecto: no es un dato del cronograma, pero sirve para sus documentos, como el Plan de Gestión.</p>
+
+            <div class="mb-4">
+                <label for="wizard-tender-name" class="field-label">Nombre del proceso</label>
+                <input id="wizard-tender-name" data-field="tender.name" type="text" maxlength="120" aria-describedby="wizard-tender-name-help"
+                       placeholder="Obras Nuevas del Decreto Exento N.º 115 de 2011" class="field">
+                <p id="wizard-tender-name-help" class="mt-2 text-sm text-muted-foreground-1">Como lo llaman las Bases: las obras que se licitan y el decreto que las fija.</p>
+            </div>
+
+            <div class="flex flex-wrap gap-x-6 gap-y-4">
+                <div>
+                    <label for="wizard-award-date" class="field-label">Adjudicación estimada</label>
+                    <input id="wizard-award-date" data-field="tender.awardDate" type="date" aria-describedby="wizard-award-help" class="field w-auto">
+                    <p id="wizard-award-help" class="mt-2 text-sm text-muted-foreground-1">La que indican las Bases.</p>
+                </div>
+                <div>
+                    <label for="wizard-day-one" class="field-label">Día 1</label>
+                    <input id="wizard-day-one" data-field="tender.dayOne" data-required="Falta el día 1." type="date" aria-describedby="wizard-day-one-help" class="field w-auto">
+                    <p id="wizard-day-one-help" class="mt-2 text-sm text-muted-foreground-1">Se propone la adjudicación más 140 días.</p>
+                </div>
+            </div>
+
+            <h4 class="text-sm font-medium mt-6 mb-1">Garantías y multa de las Bases</h4>
+            <p id="wizard-rates-help" class="text-sm text-muted-foreground-1 mb-4">En porcentaje del V.I. referencial de cada obra, como las fijan las Bases. Sirven para el costo del atraso y el monto de las boletas.</p>
+            <div class="flex flex-wrap gap-x-6 gap-y-4">
+                <div>
+                    <label for="wizard-delay-penalty" class="field-label">Multa por atraso (% por día)</label>
+                    <input id="wizard-delay-penalty" data-field="tender.delayPenaltyPercent" type="number" min="0" step="any" placeholder="0,068" aria-describedby="wizard-rates-help" class="field w-auto">
+                </div>
+                <div>
+                    <label for="wizard-milestone-guarantee" class="field-label">Boleta por hito (%)</label>
+                    <input id="wizard-milestone-guarantee" data-field="tender.milestoneGuaranteePercent" type="number" min="0" step="any" placeholder="2" aria-describedby="wizard-rates-help" class="field w-auto">
+                </div>
+                <div>
+                    <label for="wizard-performance-guarantee" class="field-label">Boleta de ejecución (%)</label>
+                    <input id="wizard-performance-guarantee" data-field="tender.performanceGuaranteePercent" type="number" min="0" step="any" placeholder="8" aria-describedby="wizard-rates-help" class="field w-auto">
+                </div>
+            </div>
+        </div>
+
+        <div data-hs-stepper-content-item='{"index": 2}' style="display: none;">
+            <h3 class="font-semibold mb-1">Obras</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Las obras del proceso en las que participa el proyecto. Cada una tiene su plazo constructivo, contado desde el día 1.</p>
+
+            <div id="wizard-works" class="flex flex-col gap-3"></div>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+
+            <button type="button" id="wizard-add-work"
+                    class="mt-4 btn btn-outline">
+                <span class="material-symbols-outlined" aria-hidden="true">add</span>
+                Agregar obra
+            </button>
+        </div>
+        <div data-hs-stepper-content-item='{"index": 3}' style="display: none;">
+            <h3 class="font-semibold mb-1">Instalaciones</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Lo que se construye en cada obra: sus líneas y sus subestaciones, nuevas o ampliaciones de una existente. El nombre va sin el tipo; lo nuevo lleva "Nueva" o "Nuevo" en el nombre. De cada línea, su longitud y su tensión, como las da el decreto: de ellas salen sus torres. De cada subestación, sus patios, uno por tensión, con su tecnología, convencional (AIS), encapsulada en gas (GIS) o híbrida, y sus paños como los da el decreto, y su transformación.</p>
+
+            <div id="wizard-facilities" class="flex flex-col gap-6"></div>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+        </div>
+        <div data-hs-stepper-content-item='{"index": 4}' style="display: none;">
+            <h3 class="font-semibold mb-1">Hitos</h3>
+            <p id="wizard-milestone-definition" class="text-sm text-muted-foreground-1 mb-2"></p>
+            <p class="text-sm text-muted-foreground-1 mb-6">No llevan fecha: la de cada hito resulta del cronograma. Aquí va solo lo que las Bases fijan.</p>
+
+            <div id="wizard-milestones" class="flex flex-col gap-8"></div>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+        </div>
+
+        <div data-hs-stepper-content-item='{"index": 5}' style="display: none;">
+            <h3 class="font-semibold mb-1">Bienes</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Los bienes que el proyecto suministra, para sus líneas y para sus subestaciones. Cada uno agrega a la EDT su contratación, su suministro y su entrega en sitio. Quién los compra se decide en el paso siguiente. Los reactores, la transformación, la compensación y el GIS declarados en Instalaciones van marcados y se quitan allí.</p>
+
+            <div id="wizard-goods" class="flex flex-col gap-8"></div>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+        </div>
+        <div data-hs-stepper-content-item='{"index": 6}' style="display: none;">
+            <h3 class="font-semibold mb-1">Contratos</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Todo lo que la compañía contrata para el proyecto. Los contratos técnicos reparten la ingeniería, los bienes y la construcción, obra por obra; los de líneas y los de subestaciones no se mezclan. El tipo de cada contrato sale de su alcance.</p>
+
+            <div id="wizard-contracts" class="flex flex-col gap-8"></div>
+
+            <section class="mt-8 pt-6 border-t border-border">
+                <h4 class="text-sm font-semibold mb-1">Otros contratos</h4>
+                <p class="text-sm text-muted-foreground-1 mb-4">Las demás contrataciones de la compañía. Sin una, su trabajo sigue en la EDT: lo hace la compañía.</p>
+                <div id="wizard-services" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"></div>
+            </section>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+        </div>
+
+        <div data-hs-stepper-content-item='{"index": 7}' style="display: none;">
+            <h3 class="font-semibold mb-1">Construcción</h3>
+            <p class="text-sm text-muted-foreground-1 mb-4">Cada línea se construye por tramos y cada subestación por paños: cada actividad tiene sus equipos, y cada equipo avanza por un frente de lotes contiguos detrás de la actividad anterior. Los equipos se calculan solos para que cada obra cumpla su plazo, con la misma cantidad en todas las actividades para que los frentes coincidan. Un equipo que cambies queda fijado (con candado) y el cálculo lo respeta; el candado lo vuelve al cálculo.</p>
+
+            <div id="wizard-construction"></div>
+            <p class="mt-3 text-sm text-danger-text" role="alert" data-step-error hidden></p>
+        </div>
+
+        <div data-hs-stepper-content-item='{"index": 8}' style="display: none;">
+            <h3 class="font-semibold mb-1">Revisión</h3>
+            <p class="text-sm text-muted-foreground-1 mb-6">Lo que el asistente va a crear. Para cambiar algo, vuelve al paso con "Anterior".</p>
+
+            <div id="wizard-review" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"></div>
+
+            <details class="mt-6 border border-border rounded-lg">
+                <summary id="wizard-summary" class="px-4 py-3 text-sm font-medium cursor-pointer select-none" aria-live="polite"></summary>
+                <div class="border-t border-border overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <caption class="sr-only">EDT que resulta de las respuestas</caption>
+                        <thead>
+                            <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                                <th scope="col" class="px-3 py-2.5 text-start font-medium">EDT</th>
+                                <th scope="col" class="px-3 py-2.5 text-start font-medium">Nombre</th>
+                                <th scope="col" class="px-3 py-2.5 text-center font-medium" title="Paquete de Trabajo: el último nivel de la EDT">Paquete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wizard-outline"></tbody>
+                    </table>
+                </div>
+            </details>
+
+            <details class="mt-3 border border-border rounded-lg">
+                <summary id="wizard-tasks-summary" class="px-4 py-3 text-sm font-medium cursor-pointer select-none" aria-live="polite"></summary>
+                <div class="border-t border-border overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <caption class="sr-only">Cronograma: la EDT con las tareas de cada Paquete de Trabajo</caption>
+                        <thead>
+                            <tr class="border-b border-border text-xs font-medium text-muted-foreground-1">
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium" title="Correlativo de la tarea; lo usan las predecesoras">Id</th>
+                                <th scope="col" class="px-3 py-2.5 text-start font-medium">EDT</th>
+                                <th scope="col" class="px-3 py-2.5 text-start font-medium">Nombre</th>
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium" title="Días corridos">Duración</th>
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium whitespace-nowrap">Comienzo</th>
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium whitespace-nowrap">Fin</th>
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium whitespace-nowrap" title="Día de fin, en días corridos desde el día 1 (Texto3 en MS Project)">Día N</th>
+                                <th scope="col" class="px-3 py-2.5 text-end font-medium" title="Fecha límite que fijan las Bases: día N, en días corridos desde el día 1">Límite</th>
+                                <th scope="col" class="px-3 py-2.5 text-start font-medium" title="Id de las tareas que deben terminar antes, como en MS Project">Predecesoras</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wizard-tasks"></tbody>
+                    </table>
+                </div>
+            </details>
+
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+                <button type="button" id="wizard-basis" class="btn btn-outline">
+                    <span class="material-symbols-outlined" aria-hidden="true">download</span>
+                    Descargar Base del Cronograma
+                </button>
+                <span class="text-xs text-muted-foreground-1">Word (.docx), conforme a CA-P-007/F-003: de dónde sale cada fecha del cronograma.</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+                <button type="button" id="wizard-risks" class="btn btn-outline">
+                    <span class="material-symbols-outlined" aria-hidden="true">download</span>
+                    Descargar Registro de Riesgos
+                </button>
+                <span class="text-xs text-muted-foreground-1">Excel (.xlsx), conforme a CA-P-014/F-002: se importa en Riesgos › Registro, con R0 cargado.</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+                <button type="button" id="wizard-dictionary" class="btn btn-outline">
+                    <span class="material-symbols-outlined" aria-hidden="true">download</span>
+                    Descargar Diccionario de la EDT
+                </button>
+                <span class="text-xs text-muted-foreground-1">Excel (.xlsx), conforme a CA-P-006/F-002: se importa en Alcance › EDT y Diccionario, con R0 cargado.</span>
+            </div>
+        </div>
+
+    </form>
+
+    <!-- Navegación: en una barra angosta, los botones quedan con su ícono (button-bar, theme.css del framework) -->
+    <div class="button-bar flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="button" id="wizard-reset" class="btn btn-outline" title="Limpiar: borra todas las respuestas">
+                <span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>
+                <span class="button-label">Limpiar</span>
+            </button>
+            <button type="button" id="wizard-open" class="btn btn-outline" title="Abrir un proyecto guardado con el Asistente (.json)">
+                <span class="material-symbols-outlined" aria-hidden="true">folder_open</span>
+                <span class="button-label">Abrir</span>
+            </button>
+            <button type="button" id="wizard-save" class="btn btn-outline" title="Guardar las respuestas en un archivo (.json)">
+                <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                <span class="button-label">Guardar</span>
+            </button>
+            <input id="wizard-open-file" type="file" accept=".json,application/json" class="hidden" aria-hidden="true" tabindex="-1">
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" data-hs-stepper-back-btn title="Anterior" class="btn btn-outline">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+                <span class="button-label">Anterior</span>
+            </button>
+            <button type="button" data-hs-stepper-next-btn title="Siguiente" class="[&[hidden]]:hidden btn btn-primary">
+                <span class="button-label">Siguiente</span>
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+            </button>
+            <button type="button" id="wizard-export" title="Exportar a MS Project (XML)" aria-describedby="wizard-export-help"
+                    class="[&[hidden]]:hidden btn btn-primary">
+                <span class="material-symbols-outlined" aria-hidden="true">file_export</span>
+                <span class="button-label">Exportar a MS Project (XML)</span>
+            </button>
+            <span id="wizard-export-help" class="sr-only">El cronograma en XML, para abrirlo en MS Project, revisarlo, aprobarlo y cargarlo como R0.</span>
+        </div>
+    </div>
+    <p id="wizard-file-error" class="-mt-2 text-sm text-danger-text" role="alert" hidden></p>
+
+</section>
+
+<!-- Modal Preline — Abrir un proyecto sobre un borrador con respuestas -->
+<div id="wizard-open-confirm"
+     class="hs-overlay hs-overlay-open:opacity-100 hs-overlay-open:duration-500 hidden size-full fixed top-0 inset-s-0 z-80 opacity-0 overflow-x-hidden transition-all overflow-y-auto pointer-events-none"
+     role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="wizard-open-confirm-label">
+    <div class="dialog-sm">
+        <div class="dialog">
+
+            <div class="dialog-header">
+                <h2 id="wizard-open-confirm-label" class="dialog-title">Abrir proyecto</h2>
+                <button type="button"
+                        class="btn btn-ghost btn-icon text-muted-foreground-1 hover:text-foreground"
+                        aria-label="Cerrar" title="Cerrar" data-hs-overlay="#wizard-open-confirm">
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                </button>
+            </div>
+
+            <div class="dialog-body">
+                <p class="text-sm">¿Reemplazar lo respondido por lo del archivo <span id="wizard-open-name" class="font-semibold"></span>?</p>
+                <p class="text-sm mt-2">Lo que no hayas guardado se pierde.</p>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button" id="wizard-open-save" class="me-auto whitespace-nowrap btn btn-outline">
+                    Guardar antes
+                </button>
+                <button type="button"
+                        class="whitespace-nowrap btn btn-outline"
+                        data-hs-overlay="#wizard-open-confirm">
+                    Cancelar
+                </button>
+                <button type="button" id="wizard-open-ok"
+                        class="whitespace-nowrap btn btn-primary">
+                    Reemplazar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

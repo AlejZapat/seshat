@@ -1,0 +1,72 @@
+<!--
+    Vista Control mensual de un proyecto (vista `cost-control`, área Costos del
+    menú del proyecto): el control de los costos en un corte de avance, por
+    Cuenta de Control, con el Resumen y las dos tablas por Cuenta de Control del
+    Informe de Control de Costos (CA-P-013/F-003). Exige `pid` en la URL.
+    Fragmento inyectado en #content-area por ViewLoader — sin <html>, <head> ni
+    <body>, y sin <script>: la lógica vive en
+    src/views-init/projects/cost-control.js (las reglas, en
+    src/utilities/cost-control.js; el encabezado y el menú, en
+    src/utilities/project-header.js).
+-->
+<nav id="project-menu" aria-label="Vistas del proyecto" class="sticky -top-4 z-30 -mx-4 -mt-4 mb-4 flex flex-wrap items-center gap-1 px-4 py-2 bg-navbar border-b border-navbar-line" hidden></nav>
+
+<div id="project-not-found" class="card" hidden></div>
+
+<div id="cost-control-empty" class="card p-4 text-sm" hidden></div>
+
+<section id="cost-control-view" aria-labelledby="cost-control-heading" hidden>
+    <h2 id="cost-control-heading" class="sr-only">Control mensual de los costos</h2>
+
+    <div class="flex flex-wrap items-end gap-4 mb-3 text-sm">
+        <div>
+            <label for="cost-control-revision" class="field-label">Revisión</label>
+            <select id="cost-control-revision"
+                    class="field w-auto pe-9"></select>
+        </div>
+        <div>
+            <label for="cost-control-cut" class="field-label">Corte</label>
+            <select id="cost-control-cut"
+                    class="field w-auto pe-9"></select>
+        </div>
+    </div>
+
+    <p id="cost-control-note" class="mb-4 text-sm text-muted-foreground-1" aria-live="polite"></p>
+
+    <div id="cost-control-warnings" class="mb-4 card p-4 text-sm" hidden></div>
+
+    <div id="cost-control-content">
+        <div id="cost-control-stats" class="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-6 gap-4 mb-4"></div>
+
+        <section class="min-w-0 card mb-4" aria-labelledby="cost-control-costs-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="cost-control-costs-heading" class="font-semibold">CAPEX y costos por Cuenta de Control</h3>
+            </header>
+            <div id="cost-control-costs" class="overflow-x-auto"></div>
+        </section>
+
+        <section class="min-w-0 card mb-4" aria-labelledby="cost-control-performance-heading">
+            <header class="border-b border-border p-4">
+                <h3 id="cost-control-performance-heading" class="font-semibold">Desempeño y proyección por Cuenta de Control</h3>
+            </header>
+            <div id="cost-control-performance" class="overflow-x-auto"></div>
+        </section>
+
+        <div class="grid grid-cols-1 2xl:grid-cols-3 gap-4">
+            <section class="min-w-0 card 2xl:col-span-2" aria-labelledby="cost-control-funds-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="cost-control-funds-heading" class="font-semibold">Contingencia y Reserva de Gestión</h3>
+                </header>
+                <div id="cost-control-funds" class="overflow-x-auto"></div>
+                <p id="cost-control-funds-note" class="p-4 text-sm text-muted-foreground-1"></p>
+            </section>
+
+            <section class="min-w-0 card" aria-labelledby="cost-control-trends-heading">
+                <header class="border-b border-border p-4">
+                    <h3 id="cost-control-trends-heading" class="font-semibold">Tendencias abiertas</h3>
+                </header>
+                <div id="cost-control-trends" class="overflow-x-auto"></div>
+            </section>
+        </div>
+    </div>
+</section>
